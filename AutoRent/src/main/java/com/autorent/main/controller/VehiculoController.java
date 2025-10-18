@@ -36,7 +36,7 @@ public class VehiculoController {
         if (!model.containsAttribute("vehiculo")) {
             model.addAttribute("vehiculo", new Vehiculo());
         }
-        return "vehiculos/registrar";
+        return "vehiculos/registrarVehiculo";
 
     }
 

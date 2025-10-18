@@ -38,7 +38,7 @@ public class MantenimientoController {
             model.addAttribute("mantenimiento", new Mantenimiento());
         }
         model.addAttribute("vehiculos", vehiculoRepository.findAll()); // Para seleccionar vehículo
-        return "vehiculos/mantenimientos/registrar";
+        return "vehiculos/mantenimientos/registrarMantenimiento";
     }
 
     @PostMapping("registro")
