@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autorent - Vehiculos en Alquiler</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cabin:wght@700&family=Zalando+Sans:wght@700&display=swap"
+          rel="stylesheet">
+    <style>
+        html {
+            background: radial-gradient(circle at center, white, #B0FF9D);
+            background-attachment: fixed;
+            height: 100%;
+            min-height: 100vh;
+        }
+
+        body {
+            height: 100%;
+            margin: 0;
+            background-color: transparent !important;
+            padding-bottom: 100px;
+        }
+        .font-text-tittle {
+            font-family: 'Zalando Sans';
+            font-weight: 700;
+        }
+        .font-text {
+            font-family: 'Cabin';
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+<div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1100;">
+    <div th:if="${mensaje}" class="toast align-items-center text-bg-success border-0" role="alert"
+         aria-live="assertive" aria-atomic="true" id="toastSuccess">
+        <div class="d-flex">
+            <div class="toast-body">
+                <span th:text="${mensaje}"></span>
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+    <div th:if="${error}" class="toast align-items-center text-bg-danger border-0" role="alert"
+         aria-live="assertive" aria-atomic="true" id="toastError">
+        <div class="d-flex">
+            <div class="toast-body">
+                <span th:text="${error}"></span>
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+</div>
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10 col-lg-8">
+            <div class="card shadow-lg">
+
+                <div class="card-header bg-success text-white text-center font-text-tittle">
+                    <h2>Vehículos en Alquiler</h2>
+                </div>
+
+                <div class="card-body">
+                    <div class="d-flex justify-content-end mb-3">
+                        <form th:action="@{/vehiculos/registro}" method="get">
+                            <button class="btn btn-success">➕ Agregar Vehículo</button>
+                        </form>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table text-center table-bordered border-success align-middle">
+                            <thead class="table-success table-bordered border-success">
+                            <tr>
+                                <th class="w-auto font-text">Imagen</th>
+                                <th class="w-auto font-text">Placa</th>
+                                <th class="w-auto font-text">Marca</th>
+                                <th class="w-auto font-text">Modelo</th>
+                                <th class="w-auto font-text">Acciones</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="v : ${listaVehiculos}">
+                                <td style="width: 300px;"><img th:src="${v.foto}" alt="vehiculo" class="img-fluid"
+                                                               style="max-height: 400px; width: auto"></td>
+                                <td th:text="${v.placa}"></td>
+                                <td th:text="${v.marca}"></td>
+                                <td th:text="${v.modelo}"></td>
+                                <td>
+                                    <form th:action="@{/vehiculos/detalles/{id}(id=${v.id})}" method="post">
+                                        <button class="btn btn-info btn-sm">🔍 Detalles</button>
+                                    </form>
+                                    <br>
+                                    <form th:action="@{/vehiculos/confirmar/{id}(id=${v.id})}" method="get">
+                                        <button class="btn btn-danger btn-sm">🗑️ Eliminar</button>
+                                    </form>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const toastSuccess = document.getElementById('toastSuccess');
+        const toastError = document.getElementById('toastError');
+
+        if (toastSuccess) {
+            const bsToast = new bootstrap.Toast(toastSuccess, { delay: 4000 });
+            bsToast.show();
+        }
+
+        if (toastError) {
+            const bsToast = new bootstrap.Toast(toastError, { delay: 6000 });
+            bsToast.show();
+        }
+    });
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>AutoRent - Detalles del Vehículo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cabin:wght@700&family=Zalando+Sans:wght@700&display=swap" rel="stylesheet">
+    <style>
+        html {
+            background: radial-gradient(circle at center, white, #B0FF9D);
+            background-attachment: fixed;
+            height: 100%;
+            min-height: 100vh;
+        }
+        body {
+            height: 100%;
+            margin: 0;
+            background-color: transparent !important;
+            padding-bottom: 100px;
+        }
+        .font-text-tittle {
+            font-family: 'Zalando Sans';
+            font-weight: 700;
+        }
+        .font-text {
+            font-family: 'Cabin';
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container mt-5 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+
+            <div th:if="${mensaje}" class="alert alert-success alert-dismissible fade show" role="alert">
+                <strong>Guardado con Éxito</strong> <span th:text="${mensaje}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+
+            <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                <strong>Error</strong> <span th:text="${error}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+
+            <div class="card shadow-lg">
+                <div class="card-header bg-success text-white text-center font-text-tittle">
+                    <h2>Detalles del Vehículo</h2>
+                </div>
+
+                <div class="card-body">
+                    <div class="mb-3 text-center">
+                        <img th:src="${vehiculo.foto}" alt="vehiculo" class="img-fluid">
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="placa" class="form-label font-text">Placa:</label>
+                                <label th:text="${vehiculo.placa}" id="placa" class="form-label"></label>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="marca" class="form-label font-text">Marca:</label>
+                                <label th:text="${vehiculo.marca}" id="marca" class="form-label"></label>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="modelo" class="form-label font-text">Modelo:</label>
+                                <label th:text="${vehiculo.modelo}" id="modelo" class="form-label"></label>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="anio" class="form-label font-text">Año:</label>
+                                <label th:text="${vehiculo.anio}" id="anio" class="form-label"></label>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="color" class="form-label font-text">Color:</label>
+                                <label th:text="${vehiculo.color}" id="color" class="form-label"></label>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="transmision" class="form-label font-text">Transmisión:</label>
+                                <label th:text="${vehiculo.transmision}" id="transmision" class="form-label"></label>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="combustible" class="form-label font-text">Combustible:</label>
+                                <label th:text="${vehiculo.combustible}" id="combustible" class="form-label"></label>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="capacidad" class="form-label font-text">Cantidad de Pasajeros:</label>
+                                <label th:text="${vehiculo.capacidad}" id="capacidad" class="form-label"></label>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="kilometraje" class="form-label font-text">Kilometraje:</label>
+                                <label th:text="${vehiculo.kilometraje}" id="kilometraje" class="form-label"></label>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="precioalquilo" class="form-label font-text">Precio Alquiler por Día:</label>
+                                <label th:text="${vehiculo.precioalquilo}" id="precioalquilo" class="form-label"></label>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="estado" class="form-label font-text">Estado:</label>
+                                <label th:text="${vehiculo.estado}" id="estado" class="form-label"></label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

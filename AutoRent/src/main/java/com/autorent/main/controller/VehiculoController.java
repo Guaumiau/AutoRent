@@ -85,6 +85,8 @@ public class VehiculoController {
             System.err.println("Error de Integridad de Datos: " + e.getMessage());
 
             ra.addFlashAttribute("vehiculo", vehiculo);
+
+            return "redirect:/vehiculos/registro";
         } catch (Exception e) {
             // Error: Capturar y añadir un mensaje de error
             ra.addFlashAttribute("error", "❌ Error inesperado al registrar el vehículo.");
@@ -92,9 +94,11 @@ public class VehiculoController {
 
             // Añadir el objeto vehiculo de vuelta para rellenar el formulario
             ra.addFlashAttribute("vehiculo", vehiculo);
+
+            return "redirect:/vehiculos/registro";
         }
 
-        return "redirect:/vehiculos/registro";
+        return "redirect:/vehiculos/lista";
     }
 
     @GetMapping("/lista")
@@ -107,7 +111,7 @@ public class VehiculoController {
         return "vehiculos/listaVehiculos";
     }
 
-    @PostMapping("/detalles") //Esto debe ejecutarse en el boton de Ver Detalles en listaVehiculo.html
+    @PostMapping("/detalles/{id}") //Esto debe ejecutarse en el boton de Ver Detalles en listaVehiculo.html
     public String verDetallesVehiculo(@PathVariable Integer id, Model model, RedirectAttributes ra) {
 
         Vehiculo vehiculo = vehiculoRepository.findById(id).orElse(null);
@@ -122,7 +126,7 @@ public class VehiculoController {
         return "vehiculos/detallesVehiculo";
     }
 
-    @PostMapping("/confirmar") //Esto debe ejecutarse en el boton de eliminar en listaVehiculo.html
+    @GetMapping("/confirmar/{id}") //Esto debe ejecutarse en el boton de eliminar en listaVehiculo.html
     public String confirmarEliminarVehiculo(@PathVariable Integer id, Model model, RedirectAttributes ra) {
 
         Vehiculo vehiculo = vehiculoRepository.findById(id).orElse(null);
@@ -137,8 +141,8 @@ public class VehiculoController {
         return "vehiculos/eliminarVehiculo";
     }
 
-    @PostMapping("/eliminar") //Esto debe ejecutarse en el boton de eliminar en eliminarVehiculo.html
-    public String eliminarVehiculo(@RequestParam Integer id, RedirectAttributes ra) {
+    @PostMapping("/eliminar/{id}") //Esto debe ejecutarse en el boton de eliminar en eliminarVehiculo.html
+    public String eliminarVehiculo(@PathVariable Integer id, RedirectAttributes ra) {
         try {
             vehiculoRepository.deleteById(id);
             ra.addFlashAttribute("mensaje", "✅ Vehículo eliminado correctamente.");
