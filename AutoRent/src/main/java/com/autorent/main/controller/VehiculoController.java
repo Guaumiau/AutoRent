@@ -16,6 +16,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("vehiculos")
@@ -104,7 +105,7 @@ public class VehiculoController {
     @GetMapping("/lista")
     public String listarVehiculos(Model model) {
 
-        List<Vehiculo> vehiculos = vehiculoRepository.findAll();
+        List<Vehiculo> vehiculos = vehiculoRepository.findByEsVisibleTrue();
 
         model.addAttribute("listaVehiculos", vehiculos);
 
@@ -144,8 +145,15 @@ public class VehiculoController {
     @PostMapping("/eliminar/{id}") //Esto debe ejecutarse en el boton de eliminar en eliminarVehiculo.html
     public String eliminarVehiculo(@PathVariable Integer id, RedirectAttributes ra) {
         try {
-            vehiculoRepository.deleteById(id);
-            ra.addFlashAttribute("mensaje", "✅ Vehículo eliminado correctamente.");
+            Optional<Vehiculo> optionalVehiculo = vehiculoRepository.findById(id);
+            if (optionalVehiculo.isPresent()) {
+                Vehiculo vehiculo = optionalVehiculo.get();
+                vehiculo.setEsVisible(false);
+                vehiculoRepository.save(vehiculo);
+                ra.addFlashAttribute("mensaje", "✅ Vehículo eliminado correctamente.");
+            } else {
+                ra.addFlashAttribute("error", "❌ Vehículo no encontrado.");
+            }
         } catch (Exception e) {
             ra.addFlashAttribute("error", "❌ No se pudo eliminar el vehículo.");
         }

@@ -48,6 +48,9 @@ public class Vehiculo {
     @Column(name = "estveh")
     Boolean estado;
 
+    @Column(name = "isvisible")
+    Boolean esVisible;
+
     @Column(name = "fecharegistro")
     LocalDate fecharegistro;
 

@@ -27,19 +27,25 @@ public class Mantenimiento {
     @Column(name = "costomant")
     Double costo;
 
-    @Column(name = "responsable")
-    String responsable;
-
-    @Column(name = "estmant")
-    Boolean estado;
-
     @Column(name = "fotomant")
     String foto;
+
+    @Column(name = "detalle_mant")
+    private String detalleMant;
 
     @Transient
     private MultipartFile archivoFoto;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "idprop")
+    private Propietario propietario;
+
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "idveh")
-    Vehiculo vehiculo;
+    private Vehiculo vehiculo;
+
+    @ManyToOne
+    @JoinColumn(name = "detalle_id")
+    private DetalleMantenimiento detalle;
+
 }
