@@ -4,20 +4,20 @@ import com.autorent.main.model.Propietario;
 import com.autorent.main.model.Vehiculo;
 import com.autorent.main.repository.PropietarioRepository;
 import com.autorent.main.repository.VehiculoRepository;
+import com.autorent.main.service.ApiFactiliza;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("vehiculos")
@@ -29,15 +29,33 @@ public class VehiculoController {
     VehiculoRepository vehiculoRepository;
     @Autowired
     PropietarioRepository propietarioRepository;
+    @Autowired
+    private ApiFactiliza apiFactiliza;
 
-    @GetMapping("registro")
-    String nuevoVehiculo(Model model)
+    @GetMapping("buscar")
+    String buscarVehiculo(Model model)
     {
-        if (!model.containsAttribute("vehiculo")) {
-            model.addAttribute("vehiculo", new Vehiculo());
-        }
-        return "vehiculos/registrar";
+        return "vehiculos/buscarPlacaVehiculo";
 
+    }
+
+    @PostMapping("/buscar-y-cargar")
+    public String buscarYcargarFormulario(@RequestParam String placa, Model model, RedirectAttributes redirectAttributes) {
+
+        try {
+            // ¡Esta línea ahora devuelve un objeto 'Vehiculo' listo!
+            Vehiculo vehiculoParaForm = apiFactiliza.consultarPlacaFactiliza(placa);
+
+            // Añade el objeto al modelo
+            model.addAttribute("vehiculo", vehiculoParaForm);
+
+            return "vehiculos/registrarVehiculo";
+
+        } catch (Exception e) {
+            // Si la API falla...
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/vehiculos/buscar";
+        }
     }
 
     @PostMapping("registro")
@@ -46,6 +64,8 @@ public class VehiculoController {
         //temporalmente hasta desarrollar el modulo de usuarios, se trabajara con el propietario 1
         Propietario propietarioPorDefecto = propietarioRepository.getReferenceById(1);
 
+        vehiculo.setEsVisible(Boolean.TRUE);
+        vehiculo.setEstado(Boolean.TRUE);
         vehiculo.setFecharegistro(LocalDate.now());
         vehiculo.setPropietario(propietarioPorDefecto);
 
@@ -87,6 +107,8 @@ public class VehiculoController {
             System.err.println("Error de Integridad de Datos: " + e.getMessage());
 
             ra.addFlashAttribute("vehiculo", vehiculo);
+
+            return "redirect:/vehiculos/registro";
         } catch (Exception e) {
             // Error: Capturar y añadir un mensaje de error
             ra.addFlashAttribute("error", "❌ Error inesperado al registrar el vehículo.");
@@ -94,8 +116,68 @@ public class VehiculoController {
 
             // Añadir el objeto vehiculo de vuelta para rellenar el formulario
             ra.addFlashAttribute("vehiculo", vehiculo);
+
+            return "redirect:/vehiculos/registro";
         }
 
-        return "redirect:/vehiculos/registro";
+        return "redirect:/vehiculos/lista";
+    }
+
+    @GetMapping("/lista")
+    public String listarVehiculos(Model model) {
+
+        List<Vehiculo> vehiculos = vehiculoRepository.findByEsVisibleTrue();
+
+        model.addAttribute("listaVehiculos", vehiculos);
+
+        return "vehiculos/listaVehiculos";
+    }
+
+    @PostMapping("/detalles/{id}") //Esto debe ejecutarse en el boton de Ver Detalles en listaVehiculo.html
+    public String verDetallesVehiculo(@PathVariable Integer id, Model model, RedirectAttributes ra) {
+
+        Vehiculo vehiculo = vehiculoRepository.findById(id).orElse(null);
+
+        if (vehiculo == null) {
+            ra.addFlashAttribute("error", "❌ Error inesperado al buscar el vehículo.");
+            return "redirect:/vehiculos/lista";
+        }
+
+        model.addAttribute("vehiculo", vehiculo);
+
+        return "vehiculos/detallesVehiculo";
+    }
+
+    @GetMapping("/confirmar/{id}") //Esto debe ejecutarse en el boton de eliminar en listaVehiculo.html
+    public String confirmarEliminarVehiculo(@PathVariable Integer id, Model model, RedirectAttributes ra) {
+
+        Vehiculo vehiculo = vehiculoRepository.findById(id).orElse(null);
+
+        if (vehiculo == null) {
+            ra.addFlashAttribute("error", "❌ No se encontró el vehículo.");
+            return "redirect:/vehiculos/lista";
+        }
+
+        model.addAttribute("vehiculo", vehiculo);
+
+        return "vehiculos/eliminarVehiculo";
+    }
+
+    @PostMapping("/eliminar/{id}") //Esto debe ejecutarse en el boton de eliminar en eliminarVehiculo.html
+    public String eliminarVehiculo(@PathVariable Integer id, RedirectAttributes ra) {
+        try {
+            Optional<Vehiculo> optionalVehiculo = vehiculoRepository.findById(id);
+            if (optionalVehiculo.isPresent()) {
+                Vehiculo vehiculo = optionalVehiculo.get();
+                vehiculo.setEsVisible(false);
+                vehiculoRepository.save(vehiculo);
+                ra.addFlashAttribute("mensaje", "✅ Vehículo eliminado correctamente.");
+            } else {
+                ra.addFlashAttribute("error", "❌ Vehículo no encontrado.");
+            }
+        } catch (Exception e) {
+            ra.addFlashAttribute("error", "❌ No se pudo eliminar el vehículo.");
+        }
+        return "redirect:/vehiculos/lista";
     }
 }
