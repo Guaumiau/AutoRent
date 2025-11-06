@@ -4,6 +4,7 @@ import com.autorent.main.model.Propietario;
 import com.autorent.main.model.Vehiculo;
 import com.autorent.main.repository.PropietarioRepository;
 import com.autorent.main.repository.VehiculoRepository;
+import com.autorent.main.service.ApiFactiliza;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,15 +29,33 @@ public class VehiculoController {
     VehiculoRepository vehiculoRepository;
     @Autowired
     PropietarioRepository propietarioRepository;
+    @Autowired
+    private ApiFactiliza apiFactiliza;
 
-    @GetMapping("registro")
-    String nuevoVehiculo(Model model)
+    @GetMapping("buscar")
+    String buscarVehiculo(Model model)
     {
-        if (!model.containsAttribute("vehiculo")) {
-            model.addAttribute("vehiculo", new Vehiculo());
-        }
-        return "vehiculos/registrarVehiculo";
+        return "vehiculos/buscarPlacaVehiculo";
 
+    }
+
+    @PostMapping("/buscar-y-cargar")
+    public String buscarYcargarFormulario(@RequestParam String placa, Model model, RedirectAttributes redirectAttributes) {
+
+        try {
+            // ¡Esta línea ahora devuelve un objeto 'Vehiculo' listo!
+            Vehiculo vehiculoParaForm = apiFactiliza.consultarPlacaFactiliza(placa);
+
+            // Añade el objeto al modelo
+            model.addAttribute("vehiculo", vehiculoParaForm);
+
+            return "vehiculos/registrarVehiculo";
+
+        } catch (Exception e) {
+            // Si la API falla...
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/vehiculos/buscar";
+        }
     }
 
     @PostMapping("registro")
@@ -45,6 +64,8 @@ public class VehiculoController {
         //temporalmente hasta desarrollar el modulo de usuarios, se trabajara con el propietario 1
         Propietario propietarioPorDefecto = propietarioRepository.getReferenceById(1);
 
+        vehiculo.setEsVisible(Boolean.TRUE);
+        vehiculo.setEstado(Boolean.TRUE);
         vehiculo.setFecharegistro(LocalDate.now());
         vehiculo.setPropietario(propietarioPorDefecto);
 

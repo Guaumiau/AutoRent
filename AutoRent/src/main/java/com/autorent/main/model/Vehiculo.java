@@ -30,15 +30,6 @@ public class Vehiculo {
     @Column(name = "colveh")
     String color;
 
-    @Column(name = "transveh")
-    String transmision;
-
-    @Column(name = "combuveh")
-    String combustible;
-
-    @Column(name = "capacidad")
-    Integer capacidad;
-
     @Column(name = "kilometraje")
     Double kilometraje;
 
