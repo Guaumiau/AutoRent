@@ -4,7 +4,6 @@ import com.autorent.main.model.Usuario;
 import com.autorent.main.model.Vehiculo;
 import com.autorent.main.model.VehiculosEliminados;
 import com.autorent.main.repository.UsuarioRepository;
-import com.autorent.main.repository.UsuarioRepository;
 import com.autorent.main.repository.VehiculoRepository;
 import com.autorent.main.repository.VehiculosEliminadosRepository;
 import com.autorent.main.service.ApiFactiliza;
