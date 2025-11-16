@@ -93,8 +93,8 @@
                                 />
                                 <input
                                         type="hidden"
-                                        th:field="*{propietario.id}"
-                                        id="propietarioId"
+                                        th:field="*{usuario.id}"
+                                        id="usuarioId"
                                 />
                             </div>
 
@@ -222,8 +222,8 @@
       const tipoSelect = document.getElementById("tipo");
       const detalleSelect = document.getElementById("detalleMant");
       const vehiculoSelect = document.getElementById("vehiculo");
-      const propietarioInput = document.getElementById("propietario");
-      const propietarioIdInput = document.getElementById("propietarioId");
+      const propietarioInput = document.getElementById("usuario");
+      const propietarioIdInput = document.getElementById("usuarioId");
 
       tipoSelect.addEventListener("change", async () => {
         const tipo = tipoSelect.value.trim();

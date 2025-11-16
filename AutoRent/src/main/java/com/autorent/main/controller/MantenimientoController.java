@@ -5,7 +5,7 @@ import com.autorent.main.model.Mantenimiento;
 import com.autorent.main.model.Vehiculo;
 import com.autorent.main.repository.DetalleMantenimientoRepository;
 import com.autorent.main.repository.MantenimientoRepository;
-import com.autorent.main.repository.PropietarioRepository;
+import com.autorent.main.repository.UsuarioRepository;
 import com.autorent.main.repository.VehiculoRepository;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
@@ -36,7 +36,7 @@ public class MantenimientoController {
     private VehiculoRepository vehiculoRepository;
 
     @Autowired
-    private PropietarioRepository propietarioRepository;
+    private UsuarioRepository usuarioRepository;
 
     @Autowired
     private DetalleMantenimientoRepository detalleRepository;
@@ -48,7 +48,7 @@ public class MantenimientoController {
             model.addAttribute("mantenimiento", new Mantenimiento());
         }
         model.addAttribute("vehiculos", vehiculoRepository.findAll());
-        model.addAttribute("propietarios", propietarioRepository.findAll());
+        model.addAttribute("propietarios", usuarioRepository.findAll());
         return "vehiculos/mantenimientos/registrarmantenimiento";
     }
 
@@ -62,7 +62,7 @@ public class MantenimientoController {
             Vehiculo vehiculo = vehiculoRepository.findById(mantenimiento.getVehiculo().getId()).orElse(null);
             if (vehiculo != null) {
                 mantenimiento.setVehiculo(vehiculo);
-                mantenimiento.setPropietario(vehiculo.getPropietario());
+                mantenimiento.setUsuario(vehiculo.getUsuario());
             }
         }
 
@@ -121,10 +121,10 @@ public class MantenimientoController {
         Vehiculo v = vehiculoRepository.findById(vehiculoId).orElse(null);
         Map<String, Object> datos = new HashMap<>();
 
-        if (v != null && v.getPropietario() != null) {
-            datos.put("id", v.getPropietario().getId());
+        if (v != null && v.getUsuario() != null) {
+            datos.put("id", v.getUsuario().getId());
             datos.put("nombreCompleto",
-                    v.getPropietario().getNombres() + " " + v.getPropietario().getApellidos());
+                    v.getUsuario().getNombres() + " " + v.getUsuario().getApellidos());
         } else {
             datos.put("id", "");
             datos.put("nombreCompleto", "");

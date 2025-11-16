@@ -8,5 +8,5 @@ import java.util.List;
 
 @Repository
 public interface VehiculoRepository extends JpaRepository<Vehiculo, Integer> {
-    List<Vehiculo> findByEsVisibleTrue();
+    List<Vehiculo> findByEstadoTrue();
 }

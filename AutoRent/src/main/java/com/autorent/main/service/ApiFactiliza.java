@@ -83,7 +83,6 @@ public class ApiFactiliza {
 
         // Rellenamos valores por defecto de tu Entidad que la API no provee
         vehiculo.setEstado(true);
-        vehiculo.setEsVisible(true);
         vehiculo.setFecharegistro(LocalDate.now());
         // Kilometraje, Precio, Foto y Propietario quedan en 'null'
         // para que se rellenen en el formulario.

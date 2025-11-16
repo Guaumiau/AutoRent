@@ -48,23 +48,34 @@
 
                 <div class="card-body bg-white">
 
-                    <div class="mb-3">
-                        <label class="form-label">¿Desea eliminar el vehículo de placa </label>
-                        <label th:text="${vehiculo.placa}" class="form-label"></label>
-                        <label class="form-label">?</label>
-                    </div>
-                    <div class="mb-3 d-flex justify-content-between">
-                        <form th:action="@{/vehiculos/lista}" method="get">
-                            <button class="btn btn-outline-secondary px-4">
+                    <form th:action="@{/vehiculos/eliminar/{id}(id=${vehiculo.id})}" method="post">
+
+                        <div class="mb-3">
+                            <p class="fs-5">¿Estás seguro de que deseas eliminar el vehículo con placa <strong th:text="${vehiculo.placa}">AJM229</strong>?</p>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="razon" class="form-label fw-bold">Razón de la eliminación:</label>
+                            <textarea class="form-control"
+                                      id="razon"
+                                      name="razon"
+                                      rows="3"
+                                      placeholder="Escriba por qué se da de baja este vehículo (ej. 'Vendido', 'Fin de vida útil', etc.)"
+                                      required></textarea>
+                        </div>
+
+                        <div class="mb-3 d-flex justify-content-between">
+
+                            <a th:href="@{/vehiculos/lista}" class="btn btn-outline-secondary px-4">
                                 <i class="bi bi-x-lg me-1"></i> No, volver
-                            </button>
-                        </form>
-                        <form th:action="@{/vehiculos/eliminar/{id}(id=${vehiculo.id})}" method="post">
-                            <button class="btn btn-dark px-4">
+                            </a>
+
+                            <button type="submit" class="btn btn-dark px-4">
                                 <i class="bi bi-trash me-1"></i> Sí, eliminar
                             </button>
-                        </form>
-                    </div>
+                        </div>
+
+                    </form>
                 </div>
             </div>
         </div>

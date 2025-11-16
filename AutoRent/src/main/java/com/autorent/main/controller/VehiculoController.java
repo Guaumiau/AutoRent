@@ -1,14 +1,18 @@
 package com.autorent.main.controller;
 
-import com.autorent.main.model.Propietario;
+import com.autorent.main.model.Usuario;
 import com.autorent.main.model.Vehiculo;
-import com.autorent.main.repository.PropietarioRepository;
+import com.autorent.main.model.VehiculosEliminados;
+import com.autorent.main.repository.UsuarioRepository;
+import com.autorent.main.repository.UsuarioRepository;
 import com.autorent.main.repository.VehiculoRepository;
+import com.autorent.main.repository.VehiculosEliminadosRepository;
 import com.autorent.main.service.ApiFactiliza;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -28,7 +32,9 @@ public class VehiculoController {
     @Autowired
     VehiculoRepository vehiculoRepository;
     @Autowired
-    PropietarioRepository propietarioRepository;
+    UsuarioRepository usuarioRepository;
+    @Autowired
+    VehiculosEliminadosRepository vehiculosEliminadosRepository;
     @Autowired
     private ApiFactiliza apiFactiliza;
 
@@ -62,12 +68,11 @@ public class VehiculoController {
     String registrarVehiculo(Model model, Vehiculo vehiculo, RedirectAttributes ra)
     {
         //temporalmente hasta desarrollar el modulo de usuarios, se trabajara con el propietario 1
-        Propietario propietarioPorDefecto = propietarioRepository.getReferenceById(1);
+        Usuario usuario = usuarioRepository.getReferenceById(1);
 
-        vehiculo.setEsVisible(Boolean.TRUE);
         vehiculo.setEstado(Boolean.TRUE);
         vehiculo.setFecharegistro(LocalDate.now());
-        vehiculo.setPropietario(propietarioPorDefecto);
+        vehiculo.setUsuario(usuario);
 
         MultipartFile archivo = vehiculo.getArchivoFoto();
 
@@ -126,7 +131,7 @@ public class VehiculoController {
     @GetMapping("/lista")
     public String listarVehiculos(Model model) {
 
-        List<Vehiculo> vehiculos = vehiculoRepository.findByEsVisibleTrue();
+        List<Vehiculo> vehiculos = vehiculoRepository.findByEstadoTrue();
 
         model.addAttribute("listaVehiculos", vehiculos);
 
@@ -164,13 +169,24 @@ public class VehiculoController {
     }
 
     @PostMapping("/eliminar/{id}") //Esto debe ejecutarse en el boton de eliminar en eliminarVehiculo.html
-    public String eliminarVehiculo(@PathVariable Integer id, RedirectAttributes ra) {
+    @Transactional
+    public String eliminarVehiculo(@PathVariable Integer id, @RequestParam("razon") String razon, RedirectAttributes ra) {
         try {
             Optional<Vehiculo> optionalVehiculo = vehiculoRepository.findById(id);
             if (optionalVehiculo.isPresent()) {
                 Vehiculo vehiculo = optionalVehiculo.get();
-                vehiculo.setEsVisible(false);
+
+                VehiculosEliminados registro = new VehiculosEliminados();
+                registro.setVehiculo(vehiculo);
+                registro.setUsuario(vehiculo.getUsuario());
+                registro.setFecharegistro(LocalDate.now());
+                registro.setRazon(razon);
+
+                vehiculosEliminadosRepository.save(registro);
+
+                vehiculo.setEstado(false);
                 vehiculoRepository.save(vehiculo);
+
                 ra.addFlashAttribute("mensaje", "✅ Vehículo eliminado correctamente.");
             } else {
                 ra.addFlashAttribute("error", "❌ Vehículo no encontrado.");

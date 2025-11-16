@@ -3,13 +3,12 @@ package com.autorent.main.model;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @Data
 @Entity
-@Table(name = "propietario")
-public class Propietario {
+@Table(name = "usuario")
+public class Usuario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "idprop")
@@ -30,8 +29,9 @@ public class Propietario {
     @Column(name = "estprop")
     Boolean estado;
 
-    @OneToMany(mappedBy = "propietario",
-            cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY)
+    @Column(name = "tipoUsuario")
+    String tipoUsuario;
+
+    @OneToMany(mappedBy = "usuario")
     private List<Vehiculo> vehiculos;
 }

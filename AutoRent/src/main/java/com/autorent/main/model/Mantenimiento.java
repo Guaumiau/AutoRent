@@ -38,7 +38,7 @@ public class Mantenimiento {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "idprop")
-    private Propietario propietario;
+    private Usuario usuario;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "idveh")

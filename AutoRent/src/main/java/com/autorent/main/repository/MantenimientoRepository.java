@@ -12,7 +12,7 @@ public interface MantenimientoRepository extends JpaRepository<Mantenimiento, In
 
     @Query("SELECT m FROM Mantenimiento m " +
             "LEFT JOIN FETCH m.vehiculo v " +
-            "LEFT JOIN FETCH v.propietario " +
+            "LEFT JOIN FETCH v.usuario " +
             "LEFT JOIN FETCH m.detalle d")
     List<Mantenimiento> findAllWithRelations();
 }
