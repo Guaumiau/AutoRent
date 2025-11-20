@@ -2,36 +2,40 @@ package com.autorent.main.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
-
 import java.util.List;
 
 @Data
 @Entity
 @Table(name = "usuario")
 public class Usuario {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "idprop")
-    Integer id;
+    private Integer id;
 
     @Column(name = "nomprop")
-    String nombres;
+    private String nombres;
 
     @Column(name = "apeprop")
-    String apellidos;
+    private String apellidos;
 
     @Column(name = "dniprop")
-    String dni;
+    private String dni;
 
     @Column(name = "emailprop")
-    String email;
+    private String email;
+
+    @Column(name = "password")
+    private String password;
 
     @Column(name = "estprop")
-    Boolean estado;
+    private Boolean estado;
 
-    @Column(name = "tipoUsuario")
-    String tipoUsuario;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "rol")
+    private Rol rol;
 
-    @OneToMany(mappedBy = "usuario")
+    @OneToMany(mappedBy = "usuario", fetch = FetchType.LAZY)
     private List<Vehiculo> vehiculos;
 }

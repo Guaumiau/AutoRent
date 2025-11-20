@@ -48,4 +48,16 @@ public class Mantenimiento {
     @JoinColumn(name = "detalle_id")
     private DetalleMantenimiento detalle;
 
+    @ManyToOne
+    @JoinColumn(name = "id_propietario")
+    private Propietario propietario;
+
+    public Propietario getPropietario() {
+        return propietario;
+    }
+
+    public void setPropietario(Propietario propietario) {
+        this.propietario = propietario;
+    }
+
 }
