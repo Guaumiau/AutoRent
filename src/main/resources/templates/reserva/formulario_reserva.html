@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Reservar Vehículo</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="bg-white">
+    
+    <header th:replace="~{fragments/header :: header}"></header>
+
+    <div class="container py-5">
+      <div class="row g-5">
+        
+        <div class="col-lg-7">
+          <div class="mb-4">
+            <img
+              th:src="${vehiculo.foto}"
+              class="img-fluid rounded w-100 shadow-sm"
+              alt="Foto del vehículo"
+              style="object-fit: cover; max-height: 400px;"
+            />
+          </div>
+
+          <h2 class="fw-bold text-dark mb-3">
+            <span th:text="${vehiculo.marca}">BAIC</span>
+            <span th:text="${vehiculo.modelo}">PLUS</span>,
+            <span th:text="${vehiculo.color}">BLANCO</span>
+            <span th:text="${vehiculo.anio}">2025</span>
+          </h2>
+
+          <div class="mt-4 text-secondary">
+            <p class="mb-1 fs-5">
+              <span class="fw-bold text-dark">Placa:</span> 
+              <span th:text="${vehiculo.placa}">AJM229</span>
+            </p>
+            <p class="mb-1 fs-5">
+              <span class="fw-bold text-dark">Kilometraje:</span> 
+              <span th:text="${vehiculo.kilometraje} + ' km'">180 km</span>
+            </p>
+            
+            <p class="mb-1 fs-5">
+              <span class="fw-bold text-dark">Propietario:</span>
+              <span th:if="${vehiculo.usuario != null}" 
+                    th:text="${vehiculo.usuario.nombres} + ' ' + ${vehiculo.usuario.apellidos}">
+                    Luis Ramírez
+              </span>
+              <span th:unless="${vehiculo.usuario != null}">No asignado</span>
+            </p>
+          </div>
+          
+          <hr class="my-4">
+          
+          <p class="text-muted">
+            Este vehículo se encuentra en perfectas condiciones mecánicas y estéticas. 
+            Ideal para viajes en ciudad o carretera. Cuenta con seguro vigente y documentos en regla.
+          </p>
+        </div>
+
+        <div class="col-lg-5">
+          <div class="card border-primary border-1 rounded-4 p-4 sticky-top" 
+               style="top: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+            
+            <div class="mb-4">
+              <span class="fs-2 fw-bold text-dark">S/. <span th:text="${vehiculo.precioalquilo}">50.00</span></span>
+              <span class="text-muted fs-5"> por día</span>
+            </div>
+
+            <form th:action="@{/reserva/guardar}" method="POST">
+              <input type="hidden" name="vehiculoId" th:value="${vehiculo.id}" />
+
+              <div class="mb-2 fw-bold">Fecha de Reserva:</div>
+              
+              <div class="border border-secondary rounded-3 overflow-hidden mb-4">
+                <div class="row g-0">
+                  <div class="col-6 border-end border-secondary">
+                    <div class="p-2 bg-white">
+                      <label for="fechaInicio" class="small fw-bold text-uppercase text-muted" style="font-size: 0.7rem;">Inicio:</label>
+                      <input type="date" id="fechaInicio" name="fechaInicio" class="form-control border-0 p-0 shadow-none" required>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="p-2 bg-white">
+                      <label for="fechaFin" class="small fw-bold text-uppercase text-muted" style="font-size: 0.7rem;">Final:</label>
+                      <input type="date" id="fechaFin" name="fechaFin" class="form-control border-0 p-0 shadow-none" required>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="d-grid">
+                <button type="submit" class="btn btn-primary btn-lg py-3 rounded-3 fw-bold" 
+                        style="background-color: #4472C4; border-color: #4472C4;">
+                  Reserva
+                </button>
+              </div>
+              
+              <div class="text-center mt-3">
+                <small class="text-muted">No se te cobrará nada todavía</small>
+              </div>
+            </form>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

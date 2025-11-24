@@ -74,11 +74,13 @@
                   <th>Placa</th>
                   <th>Marca</th>
                   <th>Modelo</th>
+                  <th>Estado</th>
                   <th>Acciones</th>
                 </tr>
               </thead>
               <tbody>
-                <tr th:each="v : ${listaVehiculos}">
+                <tr th:each="v : ${listaVehiculos}" 
+                    th:classappend="${v.estveh.name() == 'NO_DISPONIBLE'} ? 'table-secondary text-muted'">
                   <td style="width: 300px">
                     <img
                       th:src="${v.foto}"
@@ -91,6 +93,22 @@
                   <td th:text="${v.marca}"></td>
                   <td th:text="${v.modelo}"></td>
                   <td>
+                      <span th:if="${v.estveh.name() == 'DISPONIBLE'}" 
+                            class="badge bg-success">
+                            Activo
+                      </span>
+
+                      <span th:if="${v.estveh.name() == 'NO_DISPONIBLE'}" 
+                            class="badge bg-danger">
+                            Eliminado
+                      </span>
+                      
+                      <span th:if="${v.estveh.name() == 'PENDIENTE'}" 
+                            class="badge bg-warning text-dark">
+                            Pendiente
+                      </span>
+                  </td>
+                  <td>
                     <form
                       th:action="@{/vehiculos/detalles/{id}(id=${v.id})}"
                       method="post"
@@ -98,12 +116,11 @@
                       <button class="btn btn-info btn-sm">🔍 Detalles</button>
                     </form>
                     <br />
-                    <form
-                      th:action="@{/vehiculos/confirmar/{id}(id=${v.id})}"
-                      method="get"
-                    >
-                      <button class="btn btn-danger btn-sm">🗑️ Eliminar</button>
-                    </form>
+                    <a th:href="@{/vehiculos/confirmar/{id}(id=${v.id})}"
+                      class="btn btn-danger btn-sm"
+                      th:classappend="${v.estveh.name() == 'NO_DISPONIBLE'} ? 'disabled'">
+                      <i class="bi bi-trash"></i> Eliminar
+                    </a>
                   </td>
                 </tr>
               </tbody>

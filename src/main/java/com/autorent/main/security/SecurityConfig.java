@@ -38,9 +38,16 @@ public class SecurityConfig {
                             "/css/**",
                             "/js/**",
                             "/images/**",
-                            "/webjars/**"
-                    ).permitAll()
-                    .anyRequest().authenticated()
+                            "/webjars/**",
+                            
+                            "/login",
+                            "/logout",
+                            "/",
+                            "/index",
+                            "/reserva/catalogo"
+                        ).permitAll()
+
+                        .anyRequest().authenticated()
             )
 
             .formLogin(login -> login

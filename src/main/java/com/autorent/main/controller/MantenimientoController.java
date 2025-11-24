@@ -2,6 +2,7 @@ package com.autorent.main.controller;
 
 import com.autorent.main.model.DetalleMantenimiento;
 import com.autorent.main.model.Mantenimiento;
+import com.autorent.main.model.Usuario; // Importar Usuario
 import com.autorent.main.model.Vehiculo;
 import com.autorent.main.repository.DetalleMantenimientoRepository;
 import com.autorent.main.repository.MantenimientoRepository;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.security.Principal; // Importar Principal
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
@@ -41,28 +43,49 @@ public class MantenimientoController {
     @Autowired
     private DetalleMantenimientoRepository detalleRepository;
 
-    // Mostrar formulario
+    // Mostrar formulario (FILTRADO POR DUEÑO)
     @GetMapping("/registro")
-    public String nuevoMantenimiento(Model model) {
+    public String nuevoMantenimiento(Model model, Principal principal) { // Agregamos Principal
+        
         if (!model.containsAttribute("mantenimiento")) {
             model.addAttribute("mantenimiento", new Mantenimiento());
         }
-        model.addAttribute("vehiculos", vehiculoRepository.findAll());
-        model.addAttribute("propietarios", usuarioRepository.findAll());
+
+        // 1. Obtener Usuario Logueado
+        String email = principal.getName();
+        Usuario usuario = usuarioRepository.findByEmail(email);
+
+        // 2. Cargar SOLO los vehículos de este propietario
+        List<Vehiculo> misVehiculos = vehiculoRepository.findByUsuario(usuario);
+        
+        model.addAttribute("vehiculos", misVehiculos);
+        
+        model.addAttribute("usuarioLogueado", usuario);
+
         return "vehiculos/mantenimientos/registrarmantenimiento";
     }
 
     // Registrar mantenimiento
     @PostMapping("/registro")
-    public String registrarMantenimiento(Mantenimiento mantenimiento, RedirectAttributes ra) {
+    public String registrarMantenimiento(Mantenimiento mantenimiento, RedirectAttributes ra, Principal principal) {
+        
         mantenimiento.setFecha(LocalDate.now());
 
-        // Asignar propietario automáticamente según vehículo seleccionado
+        // 1. Obtener Usuario Logueado
+        String email = principal.getName();
+        Usuario usuario = usuarioRepository.findByEmail(email);
+
+        // 2. Asignar propietario y vehículo
         if (mantenimiento.getVehiculo() != null) {
             Vehiculo vehiculo = vehiculoRepository.findById(mantenimiento.getVehiculo().getId()).orElse(null);
-            if (vehiculo != null) {
+            
+            // Validación de seguridad: ¿El auto realmente es mío?
+            if (vehiculo != null && vehiculo.getUsuario().getId().equals(usuario.getId())) {
                 mantenimiento.setVehiculo(vehiculo);
-                mantenimiento.setUsuario(vehiculo.getUsuario());
+                mantenimiento.setUsuario(usuario); // El usuario logueado es el dueño
+            } else {
+                ra.addFlashAttribute("error", "❌ No puedes registrar mantenimiento a un vehículo ajeno.");
+                return "redirect:/vehiculos/mantenimientos/listarmantenimiento";
             }
         }
 
@@ -93,6 +116,23 @@ public class MantenimientoController {
         return "redirect:/vehiculos/mantenimientos/listarmantenimiento";
     }
 
+    // Metodo para listar mantenimientos (FILTRADO)
+    @GetMapping("/listarmantenimiento")
+    public String listarMantenimientos(Model model, Principal principal) {
+        
+        // 1. Obtener Usuario Logueado
+        String email = principal.getName();
+        Usuario usuario = usuarioRepository.findByEmail(email);
+
+        // 2. Buscar SOLO los mantenimientos de este usuario
+        // Necesitas crear este método en tu Repositorio: findByUsuario(usuario)
+        List<Mantenimiento> lista = mantenimientoRepository.findByUsuario(usuario);
+
+        model.addAttribute("listaMantenimientos", lista);
+
+        return "vehiculos/mantenimientos/listarmantenimiento";
+    }
+
     // Endpoint AJAX para traer detalles según tipo
     @GetMapping("/detalles/{tipo}")
     @ResponseBody
@@ -100,37 +140,7 @@ public class MantenimientoController {
         List<DetalleMantenimiento> detalles = detalleRepository.findByTipoMantenimiento(tipo);
         return ResponseEntity.ok(detalles);
     }
-
-    // Metodo para listar mantenimientos
-    @GetMapping("/listarmantenimiento")
-    public String listarMantenimientos(Model model) {
-        // Aquí llamas al repositorio para traer los mantenimientos con sus relaciones
-        List<Mantenimiento> lista = mantenimientoRepository.findAllWithRelations();
-
-        // Agregas la lista al modelo para que Thymeleaf pueda usarla en la vista
-        model.addAttribute("listaMantenimientos", lista);
-
-        // Retornas el nombre de la plantilla HTML
-        return "vehiculos/mantenimientos/listarmantenimiento";
-    }
-
-    // Endpoint AJAX para traer propietario según vehículo
-    @GetMapping("/vehiculos/propietario/{vehiculoId}")
-    @ResponseBody
-    public Map<String, Object> obtenerPropietario(@PathVariable Integer vehiculoId) {
-        Vehiculo v = vehiculoRepository.findById(vehiculoId).orElse(null);
-        Map<String, Object> datos = new HashMap<>();
-
-        if (v != null && v.getUsuario() != null) {
-            datos.put("id", v.getUsuario().getId());
-            datos.put("nombreCompleto",
-                    v.getUsuario().getNombres() + " " + v.getUsuario().getApellidos());
-        } else {
-            datos.put("id", "");
-            datos.put("nombreCompleto", "");
-        }
-
-        return datos;
-    }
-
+    
+    // El endpoint de 'obtenerPropietario' ya no es necesario porque el propietario siempre es el logueado.
+    // Puedes borrarlo o dejarlo si lo usas para algo más.
 }

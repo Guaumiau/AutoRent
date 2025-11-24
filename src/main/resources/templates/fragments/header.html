@@ -19,7 +19,7 @@
         th:style="
             ${#authorization.expression('hasAuthority(''cliente'')')} ? 'background-color: #0a58ca;' :
             (${#authorization.expression('hasAuthority(''propietario'')')} ? 'background-color: #212529;' :
-            'background-color: #212529;')
+            'background-color: #fd7e14;')
         ">
       <!-- NAV SUPERIOR -->
       <div
@@ -49,31 +49,50 @@
        <!-- BOTONES DERECHA -->
 <div class="d-flex align-items-center">
 
-  <!-- SI ES PROPIETARIO -->
   <a 
      th:if="${#authorization.expression('hasAuthority(''propietario'')')}"
      th:href="@{/propietario/dashboard}"
-     class="btn btn-warning d-flex align-items-center ms-2"
+     class="btn btn-warning d-flex align-items-center ms-2 py-1"
+     style="line-height: 1.2;"
+     title="Ir al Panel de Propietario"
   >
-    <i class="bi bi-person-badge me-2"></i> Soy Propietario
+    <i class="bi bi-key-fill fs-4 me-2"></i>
+    
+    <div class="text-start">
+        <div class="fw-bold" style="font-size: 0.9rem;">
+            <span th:text="${#strings.substringBefore(#authentication.name, '@')}">Miguel</span>
+        </div>
+        <div class="text-uppercase" style="font-size: 0.65rem; letter-spacing: 1px;">
+            Propietario
+        </div>
+    </div>
   </a>
 
-  <!-- SI ES CLIENTE -->
   <a 
      th:if="${#authorization.expression('hasAuthority(''cliente'')')}"
      th:href="@{/cliente/dashboard}"
-     class="btn btn-outline-light d-flex align-items-center ms-2"
+     class="btn btn-outline-light d-flex align-items-center ms-2 py-1"
+     style="line-height: 1.2;"
+     title="Ir a Mi Cuenta"
   >
-    <i class="bi bi-person me-2"></i> Mi Cuenta
+    <i class="bi bi-person-circle fs-4 me-2"></i>
+    
+    <div class="text-start">
+        <div class="fw-bold" style="font-size: 0.9rem;">
+            <span th:text="${#strings.substringBefore(#authentication.name, '@')}">Camila</span>
+        </div>
+        <div class="text-uppercase" style="font-size: 0.65rem; letter-spacing: 1px;">
+            Cliente
+        </div>
+    </div>
   </a>
 
-  <!-- SI NO ESTÁ LOGUEADO -->
   <a 
      th:if="${#authorization.expression('!isAuthenticated()')}"
      th:href="@{/login}"
      class="btn btn-outline-light d-flex align-items-center ms-2"
   >
-    <i class="bi bi-person me-2"></i> Iniciar sesión
+    <i class="bi bi-box-arrow-in-right me-2"></i> Iniciar sesión
   </a>
 
 </div>
@@ -85,7 +104,7 @@
      th:style="
         ${#authorization.expression('hasAuthority(''cliente'')')} ? 'background-color: #0a58ca;' :
         (${#authorization.expression('hasAuthority(''propietario'')')} ? 'background-color: #212529;' :
-        'background-color: #212529;')
+        'background-color: #fd7e14;')
      ">
 
 
@@ -104,60 +123,51 @@
 
         <div class="offcanvas-body d-flex flex-column">
           <ul class="list-unstyled">
+            
             <li class="py-2">
-              <a
-                th:href="@{/index}"
-                class="text-white text-decoration-none d-flex align-items-center"
-              >
+              <a th:href="@{/index}" class="text-white text-decoration-none d-flex align-items-center">
                 <i class="bi bi-house-door me-3 fs-5"></i> Inicio
               </a>
             </li>
 
             <li class="py-2">
+              <a th:href="@{/reserva/catalogo}" class="text-white text-decoration-none d-flex align-items-center">
+                <i class="bi bi-shop me-3 fs-5"></i> Ver Catálogo
+              </a>
+            </li>
+
+            <li class="py-2" th:if="${#authorization.expression('hasAuthority(''propietario'')')}">
+              
               <button
-                class="btn w-100 text-white d-flex align-items-center justify-content-between"
+                class="btn w-100 text-white p-0 border-0 d-flex align-items-center justify-content-between"
+                type="button"
                 data-bs-toggle="collapse"
                 data-bs-target="#vehiculoSub"
+                aria-expanded="false"
               >
-                <span><i class="bi bi-car-front me-3 fs-5"></i> Vehículos</span>
-                <i class="bi bi-chevron-down"></i>
+                <div class="d-flex align-items-center">
+                  <i class="bi bi-car-front me-3 fs-5"></i> 
+                  <span>Vehículos</span>
+                </div>
+                
+                <i class="bi bi-chevron-down small"></i>
               </button>
 
               <div class="collapse ps-4 mt-2" id="vehiculoSub">
-                <a
-                  th:href="@{/vehiculos/lista}"
-                  class="d-block text-secondary text-decoration-none py-1"
-                >
+                <a th:href="@{/vehiculos/lista}" class="d-block text-secondary text-decoration-none py-1">
                   Lista de Vehículos
                 </a>
-
-                <a
-                  th:href="@{/vehiculos/mantenimientos/listarmantenimiento}"
-                  class="d-block text-secondary text-decoration-none py-1"
-                >
+                <a th:href="@{/vehiculos/mantenimientos/listarmantenimiento}" class="d-block text-secondary text-decoration-none py-1">
                   Lista de Mantenimientos
                 </a>
               </div>
             </li>
-
-            <!-- <li class="py-2">
-              <a
-                th:href="@{/contacto}"
-                class="text-white text-decoration-none d-flex align-items-center"
-              >
-                <i class="bi bi-envelope me-3 fs-5"></i> Contacto
-              </a>
-            </li> -->
 
             <hr class="border-secondary" />
 
             <li class="py-2 d-flex align-items-center">
               <i class="bi bi-currency-dollar me-3 fs-5"></i> Sol peruano
             </li>
-
-            <!--<li class="py-2 d-flex align-items-center">
-              <i class="bi bi-chat-left-text me-3 fs-5"></i> Comentarios
-            </li>-->
           </ul>
 
           <div class="mt-auto text-center">

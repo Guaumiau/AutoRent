@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
   <head>
     <meta charset="UTF-8" />
     <title>Propietario - Dashboard</title>
@@ -7,69 +7,84 @@
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
       rel="stylesheet"
     />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
   </head>
 
   <body class="bg-light">
     <header th:replace="~{fragments/header :: header}"></header>
 
     <div class="container py-5">
-      <!-- Bienvenida -->
+      
       <div class="mb-4">
-        <h2 class="fw-bold">Bienvenido, Propietario</h2>
+        <h2 class="fw-bold">
+            Hola, <span th:text="${datosUsuario.nombres}">Nombre</span>
+        </h2>
         <p class="text-muted">
-          Este es tu panel como propietario de vehículos (solo visual).
+          Este es tu panel de control para gestionar tus vehículos.
         </p>
       </div>
 
-      <!-- Botón para regresar al index -->
-      <div class="mb-5">
+      <div class="mb-5 d-flex gap-2">
         <a th:href="@{/index}" class="btn btn-outline-dark">
           <i class="bi bi-house-door me-2"></i> Volver al Inicio
         </a>
+
+        <a th:href="@{/logout}" class="btn btn-danger">
+            <i class="bi bi-box-arrow-right me-2"></i> Cerrar Sesión
+        </a>
       </div>
 
-      <!-- Boceto de secciones -->
       <div class="row g-4">
-        <!-- Mis Vehículos -->
+        
         <div class="col-md-4">
-          <div class="card shadow-sm h-100">
+          <div class="card shadow-sm h-100 border-0 border-top border-4 border-dark">
             <div class="card-body">
-              <h5 class="card-title">Mis Vehículos</h5>
+              <div class="d-flex align-items-center mb-3">
+                  <i class="bi bi-car-front-fill fs-1 me-3 text-secondary"></i>
+                  <h5 class="card-title mb-0">Mis Vehículos</h5>
+              </div>
               <p class="card-text text-muted">
-                Visualiza tus vehículos registrados.
+                Administra tu flota, edita detalles o agrega nuevas unidades.
               </p>
-              <a href="#" class="btn btn-dark btn-sm">Ver Vehículos</a>
+              
+              <a th:href="@{/vehiculos/lista}" class="btn btn-dark w-100">
+                  Ver mis Vehículos
+              </a>
             </div>
           </div>
         </div>
 
-        <!-- Reservas -->
         <div class="col-md-4">
-          <div class="card shadow-sm h-100">
+          <div class="card shadow-sm h-100 border-0">
             <div class="card-body">
-              <h5 class="card-title">Reservas</h5>
-              <p class="card-text text-muted">Control de reservas de prueba.</p>
-              <a href="#" class="btn btn-dark btn-sm">Ver Reservas</a>
+              <div class="d-flex align-items-center mb-3">
+                  <i class="bi bi-calendar-check fs-1 me-3 text-secondary"></i>
+                  <h5 class="card-title mb-0">Solicitudes</h5>
+              </div>
+              <p class="card-text text-muted">Revisa quién quiere alquilar tu auto (Próximamente).</p>
+              <a href="#" class="btn btn-outline-secondary w-100 disabled">Ver Reservas</a>
             </div>
           </div>
         </div>
 
-        <!-- Configuración -->
         <div class="col-md-4">
-          <div class="card shadow-sm h-100">
+          <div class="card shadow-sm h-100 border-0">
             <div class="card-body">
-              <h5 class="card-title">Configuración</h5>
+              <div class="d-flex align-items-center mb-3">
+                  <i class="bi bi-gear-fill fs-1 me-3 text-secondary"></i>
+                  <h5 class="card-title mb-0">Configuración</h5>
+              </div>
               <p class="card-text text-muted">
-                Ajustes de tu cuenta (solo visual).
+                Ajustes de tu cuenta y perfil.
               </p>
-              <a href="#" class="btn btn-dark btn-sm">Ir a Configuración</a>
+              <a href="#" class="btn btn-outline-dark w-100">Ir a Configuración</a>
             </div>
           </div>
         </div>
+
       </div>
     </div>
 
-    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   </body>
 </html>

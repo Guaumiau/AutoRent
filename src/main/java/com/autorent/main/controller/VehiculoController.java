@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.security.Principal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
@@ -65,10 +66,11 @@ public class VehiculoController {
     }
 
     @PostMapping("registro")
-    String registrarVehiculo(Model model, Vehiculo vehiculo, RedirectAttributes ra)
+    String registrarVehiculo(Model model, Vehiculo vehiculo, RedirectAttributes ra, Principal principal)
     {
-        //temporalmente hasta desarrollar el modulo de usuarios, se trabajara con el propietario 1
-        Usuario usuario = usuarioRepository.getReferenceById(1);
+        String email = principal.getName();
+        Usuario usuario = usuarioRepository.findByEmail(email);
+        vehiculo.setUsuario(usuario);
 
         vehiculo.setEstveh(EstadoVehiculo.DISPONIBLE);
         vehiculo.setFecharegistro(LocalDate.now());
@@ -129,9 +131,13 @@ public class VehiculoController {
     }
 
     @GetMapping("/lista")
-    public String listarVehiculos(Model model) {
+    public String listarVehiculos(Model model, Principal principal) {
 
-        List<Vehiculo> vehiculos = vehiculoRepository.findByEstveh(EstadoVehiculo.DISPONIBLE);
+        String email = principal.getName();
+        
+        Usuario usuarioLogueado = usuarioRepository.findByEmail(email);
+
+        List<Vehiculo> vehiculos = vehiculoRepository.findByUsuario(usuarioLogueado);
 
         model.addAttribute("listaVehiculos", vehiculos);
 

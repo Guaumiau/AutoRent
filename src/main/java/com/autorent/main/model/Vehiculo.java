@@ -49,7 +49,7 @@ public class Vehiculo {
     @Transient
     private MultipartFile archivoFoto;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "idprop")
-    Usuario usuario;
+    private Usuario usuario;
 }

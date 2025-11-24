@@ -115,12 +115,7 @@
                       id="propietario"
                       class="form-control"
                       readonly
-                      placeholder="Seleccione un vehículo"
-                    />
-                    <input
-                      type="hidden"
-                      th:field="*{usuario.id}"
-                      id="usuarioId"
+                      th:value="${usuarioLogueado.nombres + ' ' + usuarioLogueado.apellidos}" 
                     />
                   </div>
 
@@ -247,9 +242,6 @@
       document.addEventListener("DOMContentLoaded", () => {
         const tipoSelect = document.getElementById("tipo");
         const detalleSelect = document.getElementById("detalleMant");
-        const vehiculoSelect = document.getElementById("vehiculo");
-        const propietarioInput = document.getElementById("usuario");
-        const propietarioIdInput = document.getElementById("usuarioId");
 
         tipoSelect.addEventListener("change", async () => {
           const tipo = tipoSelect.value.trim();
@@ -279,30 +271,6 @@
             console.error("Error cargando detalles:", error);
             detalleSelect.innerHTML =
               '<option value="">Error al cargar opciones</option>';
-          }
-        });
-
-        vehiculoSelect.addEventListener("change", async () => {
-          const vehiculoId = vehiculoSelect.value;
-
-          if (!vehiculoId) {
-            propietarioInput.value = "";
-            propietarioIdInput.value = "";
-            return;
-          }
-
-          try {
-            const response = await fetch(
-              `/vehiculos/mantenimientos/vehiculos/propietario/${vehiculoId}`
-            );
-            const data = await response.json();
-
-            propietarioInput.value = data.nombreCompleto || "";
-            propietarioIdInput.value = data.id || "";
-          } catch (error) {
-            console.error("Error al cargar propietario:", error);
-            propietarioInput.value = "";
-            propietarioIdInput.value = "";
           }
         });
       });
