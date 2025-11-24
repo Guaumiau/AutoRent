@@ -1,5 +1,6 @@
 package com.autorent.main.controller;
 
+import com.autorent.main.model.EstadoVehiculo;
 import com.autorent.main.model.Usuario;
 import com.autorent.main.model.Vehiculo;
 import com.autorent.main.model.VehiculosEliminados;
@@ -69,7 +70,7 @@ public class VehiculoController {
         //temporalmente hasta desarrollar el modulo de usuarios, se trabajara con el propietario 1
         Usuario usuario = usuarioRepository.getReferenceById(1);
 
-        vehiculo.setEstado(Boolean.TRUE);
+        vehiculo.setEstveh(EstadoVehiculo.DISPONIBLE);
         vehiculo.setFecharegistro(LocalDate.now());
         vehiculo.setUsuario(usuario);
 
@@ -130,7 +131,7 @@ public class VehiculoController {
     @GetMapping("/lista")
     public String listarVehiculos(Model model) {
 
-        List<Vehiculo> vehiculos = vehiculoRepository.findByEstadoTrue();
+        List<Vehiculo> vehiculos = vehiculoRepository.findByEstveh(EstadoVehiculo.DISPONIBLE);
 
         model.addAttribute("listaVehiculos", vehiculos);
 
@@ -183,7 +184,7 @@ public class VehiculoController {
 
                 vehiculosEliminadosRepository.save(registro);
 
-                vehiculo.setEstado(false);
+                vehiculo.setEstveh(EstadoVehiculo.NO_DISPONIBLE);
                 vehiculoRepository.save(vehiculo);
 
                 ra.addFlashAttribute("mensaje", "✅ Vehículo eliminado correctamente.");

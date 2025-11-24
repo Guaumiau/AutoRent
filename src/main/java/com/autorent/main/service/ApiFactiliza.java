@@ -1,5 +1,6 @@
 package com.autorent.main.service; // O donde pongas tus servicios
 
+import com.autorent.main.model.EstadoVehiculo;
 import com.autorent.main.model.FactilizaResponseDTO; // El DTO que creamos
 import com.autorent.main.model.Vehiculo; // Tu Entidad
 import com.fasterxml.jackson.databind.JsonNode;
@@ -82,7 +83,7 @@ public class ApiFactiliza {
         }
 
         // Rellenamos valores por defecto de tu Entidad que la API no provee
-        vehiculo.setEstado(true);
+        vehiculo.setEstveh(EstadoVehiculo.DISPONIBLE);
         vehiculo.setFecharegistro(LocalDate.now());
         // Kilometraje, Precio, Foto y Propietario quedan en 'null'
         // para que se rellenen en el formulario.

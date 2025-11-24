@@ -36,8 +36,9 @@ public class Vehiculo {
     @Column(name = "precioalquilo")
     Double precioalquilo;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "estveh")
-    Boolean estado;
+    private EstadoVehiculo estveh;
 
     @Column(name = "fecharegistro")
     LocalDate fecharegistro;
@@ -51,16 +52,4 @@ public class Vehiculo {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "idprop")
     Usuario usuario;
-    // yo mariana puso esto
-    @ManyToOne
-    @JoinColumn(name = "id_propietario")
-    private Propietario propietario;
-
-    public Propietario getPropietario() {
-        return propietario;
-    }
-
-    public void setPropietario(Propietario propietario) {
-        this.propietario = propietario;
-    }
 }

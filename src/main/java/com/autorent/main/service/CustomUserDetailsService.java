@@ -24,15 +24,12 @@ public class CustomUserDetailsService implements UserDetailsService {
             throw new UsernameNotFoundException("Usuario no encontrado");
         }
 
-        // rol es un enum → conviértelo a ROLE_...
-        String rol = usuario.getRol().name().equalsIgnoreCase("cliente")
-                ? "ROLE_USER"
-                : "ROLE_PROP";
+        String rolNombre = usuario.getRol().name();
 
         return User.builder()
                 .username(usuario.getEmail())      // ✔ getEmail()
                 .password(usuario.getPassword())   // ✔ getPassword()
-                .authorities(rol)
+                .authorities(rolNombre)
                 .disabled(!usuario.getEstado())    // ✔ getEstado()
                 .build();
     }

@@ -17,8 +17,8 @@
 <header th:fragment="header"
         class="border-bottom border-secondary"
         th:style="
-            ${#authorization.expression('hasRole(''USER'')')} ? 'background-color: #0a58ca;' :
-            (${#authorization.expression('hasRole(''PROP'')')} ? 'background-color: #212529;' :
+            ${#authorization.expression('hasAuthority(''cliente'')')} ? 'background-color: #0a58ca;' :
+            (${#authorization.expression('hasAuthority(''propietario'')')} ? 'background-color: #212529;' :
             'background-color: #212529;')
         ">
       <!-- NAV SUPERIOR -->
@@ -32,6 +32,7 @@
           type="button"
           data-bs-toggle="offcanvas"
           data-bs-target="#sidebarMenuKayak"
+          title="Barra lateral"
         >
           <i class="bi bi-list"></i>
         </button>
@@ -48,14 +49,9 @@
        <!-- BOTONES DERECHA -->
 <div class="d-flex align-items-center">
 
-  <!-- Corazón -->
-  <button class="btn text-white me-2">
-    <i class="bi bi-heart fs-5"></i>
-  </button>
-
   <!-- SI ES PROPIETARIO -->
   <a 
-     th:if="${#authorization.expression('hasRole(''PROP'')')}"
+     th:if="${#authorization.expression('hasAuthority(''propietario'')')}"
      th:href="@{/propietario/dashboard}"
      class="btn btn-warning d-flex align-items-center ms-2"
   >
@@ -64,7 +60,7 @@
 
   <!-- SI ES CLIENTE -->
   <a 
-     th:if="${#authorization.expression('hasRole(''USER'')')}"
+     th:if="${#authorization.expression('hasAuthority(''cliente'')')}"
      th:href="@{/cliente/dashboard}"
      class="btn btn-outline-light d-flex align-items-center ms-2"
   >
@@ -87,8 +83,8 @@
      tabindex="-1"
      id="sidebarMenuKayak"
      th:style="
-        ${#authorization.expression('hasRole(''USER'')')} ? 'background-color: #0a58ca;' :
-        (${#authorization.expression('hasRole(''PROP'')')} ? 'background-color: #212529;' :
+        ${#authorization.expression('hasAuthority(''cliente'')')} ? 'background-color: #0a58ca;' :
+        (${#authorization.expression('hasAuthority(''propietario'')')} ? 'background-color: #212529;' :
         'background-color: #212529;')
      ">
 
@@ -102,10 +98,11 @@
             type="button"
             class="btn-close btn-close-white"
             data-bs-dismiss="offcanvas"
+            title="Cerrar"
           ></button>
         </div>
 
-        <div class="offcanvas-body">
+        <div class="offcanvas-body d-flex flex-column">
           <ul class="list-unstyled">
             <li class="py-2">
               <a
@@ -128,29 +125,29 @@
 
               <div class="collapse ps-4 mt-2" id="vehiculoSub">
                 <a
-                  th:href="@{/vehiculos/registro}"
+                  th:href="@{/vehiculos/lista}"
                   class="d-block text-secondary text-decoration-none py-1"
                 >
-                  Registrar Vehículos
+                  Lista de Vehículos
                 </a>
 
                 <a
                   th:href="@{/vehiculos/mantenimientos/listarmantenimiento}"
                   class="d-block text-secondary text-decoration-none py-1"
                 >
-                  Mantenimientos
+                  Lista de Mantenimientos
                 </a>
               </div>
             </li>
 
-            <li class="py-2">
+            <!-- <li class="py-2">
               <a
                 th:href="@{/contacto}"
                 class="text-white text-decoration-none d-flex align-items-center"
               >
                 <i class="bi bi-envelope me-3 fs-5"></i> Contacto
               </a>
-            </li>
+            </li> -->
 
             <hr class="border-secondary" />
 
@@ -158,9 +155,9 @@
               <i class="bi bi-currency-dollar me-3 fs-5"></i> Sol peruano
             </li>
 
-            <li class="py-2 d-flex align-items-center">
+            <!--<li class="py-2 d-flex align-items-center">
               <i class="bi bi-chat-left-text me-3 fs-5"></i> Comentarios
-            </li>
+            </li>-->
           </ul>
 
           <div class="mt-auto text-center">

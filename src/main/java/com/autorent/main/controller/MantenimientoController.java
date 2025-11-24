@@ -5,7 +5,7 @@ import com.autorent.main.model.Mantenimiento;
 import com.autorent.main.model.Vehiculo;
 import com.autorent.main.repository.DetalleMantenimientoRepository;
 import com.autorent.main.repository.MantenimientoRepository;
-import com.autorent.main.repository.PropietarioRepository;
+import com.autorent.main.repository.UsuarioRepository;
 import com.autorent.main.repository.VehiculoRepository;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
@@ -36,13 +36,24 @@ public class MantenimientoController {
     private VehiculoRepository vehiculoRepository;
 
     @Autowired
-    private PropietarioRepository propietarioRepository;
+    private UsuarioRepository usuarioRepository;
 
     @Autowired
     private DetalleMantenimientoRepository detalleRepository;
 
+    // Mostrar formulario
+    @GetMapping("/registro")
+    public String nuevoMantenimiento(Model model) {
+        if (!model.containsAttribute("mantenimiento")) {
+            model.addAttribute("mantenimiento", new Mantenimiento());
+        }
+        model.addAttribute("vehiculos", vehiculoRepository.findAll());
+        model.addAttribute("propietarios", usuarioRepository.findAll());
+        return "vehiculos/mantenimientos/registrarmantenimiento";
+    }
+
     // Registrar mantenimiento
-    @PostMapping("/registrar")
+    @PostMapping("/registro")
     public String registrarMantenimiento(Mantenimiento mantenimiento, RedirectAttributes ra) {
         mantenimiento.setFecha(LocalDate.now());
 
@@ -51,7 +62,7 @@ public class MantenimientoController {
             Vehiculo vehiculo = vehiculoRepository.findById(mantenimiento.getVehiculo().getId()).orElse(null);
             if (vehiculo != null) {
                 mantenimiento.setVehiculo(vehiculo);
-                mantenimiento.setPropietario(vehiculo.getPropietario());
+                mantenimiento.setUsuario(vehiculo.getUsuario());
             }
         }
 
@@ -74,10 +85,12 @@ public class MantenimientoController {
         } catch (Exception e) {
             ra.addFlashAttribute("error", "❌ Error al registrar el mantenimiento.");
             System.err.println("Error al guardar: " + e.getMessage());
+
+            ra.addFlashAttribute("mantenimiento", mantenimiento);
+            return "redirect:/vehiculos/mantenimientos/registro";
         }
 
-        return "redirect:/vehiculos/mantenimientos/registro";
-
+        return "redirect:/vehiculos/mantenimientos/listarmantenimiento";
     }
 
     // Endpoint AJAX para traer detalles según tipo
@@ -88,7 +101,7 @@ public class MantenimientoController {
         return ResponseEntity.ok(detalles);
     }
 
-    // Método para listar mantenimientos
+    // Metodo para listar mantenimientos
     @GetMapping("/listarmantenimiento")
     public String listarMantenimientos(Model model) {
         // Aquí llamas al repositorio para traer los mantenimientos con sus relaciones
@@ -108,31 +121,16 @@ public class MantenimientoController {
         Vehiculo v = vehiculoRepository.findById(vehiculoId).orElse(null);
         Map<String, Object> datos = new HashMap<>();
 
-        if (v != null && v.getPropietario() != null) {
-            datos.put("id", v.getPropietario().getId());
+        if (v != null && v.getUsuario() != null) {
+            datos.put("id", v.getUsuario().getId());
             datos.put("nombreCompleto",
-                    v.getPropietario().getNombres() + " " + v.getPropietario().getApellidos());
+                    v.getUsuario().getNombres() + " " + v.getUsuario().getApellidos());
         } else {
             datos.put("id", "");
             datos.put("nombreCompleto", "");
         }
 
         return datos;
-    }
-
-    @GetMapping("/registro")
-    public String nuevoMantenimiento(Model model) {
-        try {
-            model.addAttribute("mantenimiento", new Mantenimiento());
-            model.addAttribute("vehiculos", vehiculoRepository.findAll());
-            model.addAttribute("propietarios", propietarioRepository.findAll());
-            System.out.println("✅ Vista cargada correctamente");
-            return "vehiculos/mantenimientos/registrarmantenimiento";
-        } catch (Exception e) {
-            System.err.println("❌ ERROR EN CONTROLADOR: " + e.getMessage());
-            e.printStackTrace();
-            return "error";
-        }
     }
 
 }
