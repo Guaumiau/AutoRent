@@ -21,6 +21,17 @@
             (${#authorization.expression('hasAuthority(''propietario'')')} ? 'background-color: #212529;' :
             'background-color: #fd7e14;')
         ">
+        <style>
+        /* Ocultar scrollbar para Chrome, Safari y Opera */
+        .sin-barra-scroll::-webkit-scrollbar {
+            display: none;
+        }
+        /* Ocultar scrollbar para IE, Edge y Firefox */
+        .sin-barra-scroll {
+            -ms-overflow-style: none;  /* IE y Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+      </style>
       <!-- NAV SUPERIOR -->
       <div
         class="d-flex align-items-center justify-content-between px-4 py-2"
@@ -121,7 +132,7 @@
           ></button>
         </div>
 
-        <div class="offcanvas-body d-flex flex-column">
+        <div class="offcanvas-body d-flex flex-column sin-barra-scroll">
           <ul class="list-unstyled">
             
             <li class="py-2">
@@ -136,6 +147,43 @@
               </a>
             </li>
 
+            <li class="py-2" th:if="${#authorization.expression('isAuthenticated()')}">
+              
+              <button
+                class="btn w-100 text-white p-0 border-0 d-flex align-items-center justify-content-between"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#reservasSub"
+                aria-expanded="false"
+              >
+                <div class="d-flex align-items-center">
+                  <i class="bi bi-calendar-range me-3 fs-5"></i> 
+                  <span>Reservas</span>
+                </div>
+                
+                <i class="bi bi-chevron-down small"></i>
+              </button>
+
+              <div class="collapse ps-4 mt-2" id="reservasSub">
+                
+                <a th:href="@{/reserva/mis-reservas}" class="d-block text-white text-decoration-none py-1">
+                  <i class="bi bi-car-front me-2"></i> Mis Alquileres
+                </a>
+
+                <a th:if="${#authorization.expression('hasAuthority(''propietario'')')}"
+                   th:href="@{/propietario/solicitudes}" 
+                   class="d-block text-white text-decoration-none py-1">
+                  <i class="bi bi-inbox me-2"></i> Solicitudes Recibidas
+                </a>
+
+                <a th:href="@{/reserva/historial}" 
+                   class="d-block text-white text-decoration-none py-1">
+                  <i class="bi bi-clock-history me-2"></i> Historial
+                </a>
+
+              </div>
+            </li>
+
             <li class="py-2" th:if="${#authorization.expression('hasAuthority(''propietario'')')}">
               
               <button
@@ -146,20 +194,22 @@
                 aria-expanded="false"
               >
                 <div class="d-flex align-items-center">
-                  <i class="bi bi-car-front me-3 fs-5"></i> 
-                  <span>Vehículos</span>
-                </div>
+                  <i class="bi bi-speedometer2 me-3 fs-5"></i> 
+                  <span>Vehículos</span> </div>
                 
                 <i class="bi bi-chevron-down small"></i>
               </button>
 
               <div class="collapse ps-4 mt-2" id="vehiculoSub">
-                <a th:href="@{/vehiculos/lista}" class="d-block text-secondary text-decoration-none py-1">
-                  Lista de Vehículos
+                
+                <a th:href="@{/vehiculos/lista}" class="d-block text-white text-decoration-none py-1">
+                  <i class="bi bi-car-front-fill me-2"></i> Gestionar Flota
                 </a>
-                <a th:href="@{/vehiculos/mantenimientos/listarmantenimiento}" class="d-block text-secondary text-decoration-none py-1">
-                  Lista de Mantenimientos
+
+                <a th:href="@{/vehiculos/mantenimientos/listarmantenimiento}" class="d-block text-white text-decoration-none py-1">
+                  <i class="bi bi-tools me-2"></i> Mantenimientos
                 </a>
+
               </div>
             </li>
 

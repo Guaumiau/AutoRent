@@ -38,7 +38,7 @@
         
         <div class="col-md-4">
           <div class="card shadow-sm h-100 border-0 border-top border-4 border-dark">
-            <div class="card-body">
+            <div class="card-body d-flex flex-column">
               <div class="d-flex align-items-center mb-3">
                   <i class="bi bi-car-front-fill fs-1 me-3 text-secondary"></i>
                   <h5 class="card-title mb-0">Mis Vehículos</h5>
@@ -47,7 +47,7 @@
                 Administra tu flota, edita detalles o agrega nuevas unidades.
               </p>
               
-              <a th:href="@{/vehiculos/lista}" class="btn btn-dark w-100">
+              <a th:href="@{/vehiculos/lista}" class="btn btn-dark w-100 mt-auto">
                   Ver mis Vehículos
               </a>
             </div>
@@ -55,21 +55,24 @@
         </div>
 
         <div class="col-md-4">
-          <div class="card shadow-sm h-100 border-0">
-            <div class="card-body">
+          <div class="card shadow-sm h-100 border-0 border-top border-4 border-dark">
+            <div class="card-body d-flex flex-column">
               <div class="d-flex align-items-center mb-3">
                   <i class="bi bi-calendar-check fs-1 me-3 text-secondary"></i>
                   <h5 class="card-title mb-0">Solicitudes</h5>
               </div>
-              <p class="card-text text-muted">Revisa quién quiere alquilar tu auto (Próximamente).</p>
-              <a href="#" class="btn btn-outline-secondary w-100 disabled">Ver Reservas</a>
+              <p class="card-text text-muted">Revisa y aprueba las reservas pendientes.</p>
+              
+              <a th:href="@{/propietario/solicitudes}" class="btn btn-dark w-100 mt-auto">
+                  Gestionar Solicitudes
+              </a>
             </div>
           </div>
         </div>
 
         <div class="col-md-4">
           <div class="card shadow-sm h-100 border-0">
-            <div class="card-body">
+            <div class="card-body d-flex flex-column">
               <div class="d-flex align-items-center mb-3">
                   <i class="bi bi-gear-fill fs-1 me-3 text-secondary"></i>
                   <h5 class="card-title mb-0">Configuración</h5>
@@ -77,7 +80,8 @@
               <p class="card-text text-muted">
                 Ajustes de tu cuenta y perfil.
               </p>
-              <a href="#" class="btn btn-outline-dark w-100">Ir a Configuración</a>
+              
+              <a href="#" class="btn btn-outline-dark w-100 mt-auto">Ir a Configuración</a>
             </div>
           </div>
         </div>

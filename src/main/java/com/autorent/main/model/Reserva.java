@@ -18,6 +18,9 @@ public class Reserva {
     @Column(name = "fechares")
     private LocalDateTime fechares;
 
+    @Column(name = "fechafinalizacion")
+    private LocalDateTime fechafinalizacion;
+    
     @Column(name = "fechainicio")
     private LocalDateTime fechainicio;
 
@@ -26,6 +29,10 @@ public class Reserva {
 
     @Column(name = "costo")
     private Integer costo;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "estado")
+    private EstadoReserva estado;
 
     // RELACIÓN CON USUARIO (Cliente)
     // En la BD es 'idcli', aquí traemos el objeto completo Usuario
