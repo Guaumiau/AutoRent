@@ -21,6 +21,7 @@ import com.autorent.main.model.Vehiculo;
 import com.autorent.main.repository.ReservaRepository;
 import com.autorent.main.repository.UsuarioRepository;
 import com.autorent.main.repository.VehiculoRepository;
+import com.autorent.main.service.EmailService; 
 
 @Controller
 @RequestMapping("/propietario")
@@ -34,6 +35,9 @@ public class PropietarioController {
 
     @Autowired
     private VehiculoRepository vehiculoRepository;
+    
+    @Autowired
+    private EmailService emailService; 
 
     @GetMapping("/dashboard")
     public String dashboardPropietario(Model model, Principal principal) {
@@ -56,34 +60,52 @@ public class PropietarioController {
         List<Reserva> solicitudes = reservaRepository.findByVehiculo_UsuarioOrderByFecharesDesc(propietario);
         model.addAttribute("solicitudes", solicitudes);
         
-        // 👇 NUEVO: Enviamos la hora actual al HTML
         model.addAttribute("ahora", LocalDateTime.now());
         
         return "propietario/solicitudes";
     }
 
-    // 2. ACEPTAR RESERVA
+    // 2. ACEPTAR RESERVA - CORREGIDO
     @GetMapping("/reserva/aceptar/{id}")
     public String aceptarReserva(@PathVariable Integer id, RedirectAttributes ra) {
         Optional<Reserva> reservaOpt = reservaRepository.findById(id);
         
         if (reservaOpt.isPresent()) {
             Reserva reserva = reservaOpt.get();
-            // Cambiamos estado de la reserva
+            
+            // 1. Cambiamos estado de la reserva
             reserva.setEstado(EstadoReserva.CONFIRMADA);
             reservaRepository.save(reserva);
             
-            // El vehículo ya estaba PENDIENTE, ahora lo pasamos a NO_DISPONIBLE (Ocupado)
+            // 2. El vehículo lo pasamos a NO_DISPONIBLE (Ocupado)
             Vehiculo vehiculo = reserva.getVehiculo();
             vehiculo.setEstveh(EstadoVehiculo.NO_DISPONIBLE);
             vehiculoRepository.save(vehiculo);
 
-            ra.addFlashAttribute("mensaje", "✅ Reserva CONFIRMADA. El vehículo se ha marcado como ocupado.");
+            // 3. Lógica de envío de correos
+            String vehiculoNombre = vehiculo.getMarca() + " " + vehiculo.getModelo();
+            
+            //  CORRECCIÓN APLICADA: Usamos getUsuario() en lugar de getCliente()
+            String clienteEmail = reserva.getUsuario().getEmail(); 
+            
+            String propietarioEmail = vehiculo.getUsuario().getEmail(); 
+
+            // Correo al CLIENTE (Reservador)
+            String asuntoCliente = "✅ Reserva Confirmada: " + vehiculoNombre;
+            String cuerpoCliente = "¡Felicidades! Tu solicitud de reserva para el vehículo **" + vehiculoNombre + "** ha sido **CONFIRMADA** por el propietario. Revisa los detalles en tu perfil.";
+            emailService.enviarCorreo(clienteEmail, asuntoCliente, cuerpoCliente);
+
+            // Correo al PROPIETARIO (Confirmación de gestión)
+            String asuntoPropietario = "✅ Gestión de Reserva: Confirmaste la reserva para " + vehiculoNombre;
+            String cuerpoPropietario = "Has **CONFIRMADO** la reserva del vehículo **" + vehiculoNombre + "**. El vehículo ha sido marcado como ocupado.";
+            emailService.enviarCorreo(propietarioEmail, asuntoPropietario, cuerpoPropietario);
+            
+            ra.addFlashAttribute("mensaje", "✅ Reserva CONFIRMADA y correos enviados. El vehículo se ha marcado como ocupado.");
         }
         return "redirect:/propietario/solicitudes";
     }
 
-    // 3. RECHAZAR RESERVA
+    // 3. RECHAZAR RESERVA - CORREGIDO
     @GetMapping("/reserva/rechazar/{id}")
     public String rechazarReserva(@PathVariable Integer id, RedirectAttributes ra) {
         Optional<Reserva> reservaOpt = reservaRepository.findById(id);
@@ -91,17 +113,35 @@ public class PropietarioController {
         if (reservaOpt.isPresent()) {
             Reserva reserva = reservaOpt.get();
             
-            // Cambiamos estado de la reserva
+            // 1. Cambiamos estado de la reserva
             reserva.setEstado(EstadoReserva.RECHAZADA);
             reserva.setFechafinalizacion(LocalDateTime.now());
             reservaRepository.save(reserva);
 
-            // ¡IMPORTANTE! Liberamos el vehículo para que vuelva al catálogo
+            // 2. ¡IMPORTANTE! Liberamos el vehículo
             Vehiculo vehiculo = reserva.getVehiculo();
             vehiculo.setEstveh(EstadoVehiculo.DISPONIBLE);
             vehiculoRepository.save(vehiculo);
 
-            ra.addFlashAttribute("error", "❌ Reserva RECHAZADA. El vehículo vuelve a estar disponible.");
+            // 3. Lógica de envío de correos
+            String vehiculoNombre = vehiculo.getMarca() + " " + vehiculo.getModelo();
+            
+            // 🔥 CORRECCIÓN APLICADA: Usamos getUsuario() en lugar de getCliente()
+            String clienteEmail = reserva.getUsuario().getEmail(); 
+            
+            String propietarioEmail = vehiculo.getUsuario().getEmail();
+
+            // Correo al CLIENTE (Reservador)
+            String asuntoCliente = "❌ Reserva Rechazada: " + vehiculoNombre;
+            String cuerpoCliente = "Lamentamos informarte que tu solicitud de reserva para el vehículo **" + vehiculoNombre + "** ha sido **RECHAZADA** por el propietario. Puedes buscar otras opciones en nuestro catálogo.";
+            emailService.enviarCorreo(clienteEmail, asuntoCliente, cuerpoCliente);
+
+            // Correo al PROPIETARIO (Confirmación de gestión)
+            String asuntoPropietario = "❌ Gestión de Reserva: Rechazaste la reserva para " + vehiculoNombre;
+            String cuerpoPropietario = "Has **RECHAZADO** la reserva del vehículo **" + vehiculoNombre + "**. El vehículo ha sido marcado como DISPONIBLE nuevamente.";
+            emailService.enviarCorreo(propietarioEmail, asuntoPropietario, cuerpoPropietario);
+            
+            ra.addFlashAttribute("error", "❌ Reserva RECHAZADA y correos enviados. El vehículo vuelve a estar disponible.");
         }
         return "redirect:/propietario/solicitudes";
     }
