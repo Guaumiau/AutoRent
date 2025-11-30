@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Vehículos en Alquiler</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="bg-light">
+    
+    <header th:replace="~{fragments/header :: header}"></header>
+
+    <div
+      class="toast-container position-fixed bottom-0 end-0 p-3"
+      style="z-index: 1100"
+    >
+      <div
+        th:if="${mensaje}"
+        class="toast align-items-center text-bg-success border-0"
+        role="alert"
+        aria-live="assertive"
+        aria-atomic="true"
+        id="toastSuccess"
+      >
+        <div class="d-flex">
+          <div class="toast-body">
+            <span th:text="${mensaje}"></span>
+          </div>
+          <button
+            type="button"
+            class="btn-close btn-close-white me-2 m-auto"
+            data-bs-dismiss="toast"
+            aria-label="Close"
+          ></button>
+        </div>
+      </div>
+      <div
+        th:if="${error}"
+        class="toast align-items-center text-bg-danger border-0"
+        role="alert"
+        aria-live="assertive"
+        aria-atomic="true"
+        id="toastError"
+      >
+        <div class="d-flex">
+          <div class="toast-body">
+            <span th:text="${error}"></span>
+          </div>
+          <button
+            type="button"
+            class="btn-close btn-close-white me-2 m-auto"
+            data-bs-dismiss="toast"
+            aria-label="Close"
+          ></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="container py-5">
+      
+      <h2 class="mb-4 text-dark fw-bold">Vehículos en Alquiler</h2>
+
+      <div class="row row-cols-1 row-cols-md-3 g-4">
+        
+        <div class="col" th:each="vehiculo : ${vehiculos}">
+          <div class="card h-100 shadow-sm border-0">
+            
+            <img
+              th:src="${vehiculo.foto}" 
+              class="card-img-top"
+              alt="Foto del auto"
+              style="height: 220px; object-fit: cover;"
+            />
+
+            <div class="card-body">
+              
+              <div class="d-flex justify-content-between mb-2">
+                <div class="small">
+                  <span class="text-muted">Marca:</span>
+                  <span class="fw-bold text-dark" th:text="${vehiculo.marca}"></span>
+                </div>
+                <div class="small">
+                  <span class="text-muted">Color:</span>
+                  <span class="fw-bold text-dark" th:text="${vehiculo.color}"></span>
+                </div>
+              </div>
+
+              <div class="d-flex justify-content-between mb-4">
+                <div class="small">
+                  <span class="text-muted">Modelo:</span>
+                  <span class="fw-bold text-dark" th:text="${vehiculo.modelo}"></span>
+                </div>
+                <div class="small">
+                  <span class="text-muted">Precio/Día:</span>
+                  <span class="fw-bold text-dark" 
+                        th:text="'S/. ' + ${#numbers.formatDecimal(vehiculo.precioalquilo, 1, 'COMMA', 2, 'POINT')}">
+                        S/. 50.00
+                  </span>
+                </div>
+              </div>
+
+              <div class="d-grid">
+                <button th:if="${vehiculo.usuario.id == idUsuarioLogueado}" 
+                        class="btn btn-secondary py-2" 
+                        disabled>
+                  <i class="bi bi-person-check-fill me-1"></i> Es tu vehículo
+                </button>
+
+                <a th:unless="${vehiculo.usuario.id == idUsuarioLogueado}"
+                  th:href="@{/reserva/crear/{id}(id=${vehiculo.id})}" 
+                  class="btn btn-primary py-2" 
+                  style="background-color: #4472C4; border-color: #4472C4;">
+                  Reservar ahora
+                </a>
+              </div>
+              
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function() {
+        
+        // 1. Manejo del Toast de Éxito (Verde)
+        const toastSuccessEl = document.getElementById('toastSuccess');
+        if (toastSuccessEl) {
+          const toastSuccess = new bootstrap.Toast(toastSuccessEl, { delay: 4000 });
+          toastSuccess.show();
+        }
+
+        // 2. Manejo del Toast de Error (Rojo)
+        const toastErrorEl = document.getElementById('toastError');
+        if (toastErrorEl) {
+          const toastError = new bootstrap.Toast(toastErrorEl, { delay: 6000 });
+          toastError.show();
+        }
+        
+      });
+    </script>
+  </body>
+</html>
