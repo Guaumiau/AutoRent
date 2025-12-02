@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html xmlns:th="http://www.thymeleaf.org" lang="es">
   <head>
     <meta charset="UTF-8" />
@@ -17,59 +16,27 @@
   </head>
 
   <body class="bg-light">
-    <!-- Header -->
     <div th:replace="fragments/header :: header"></div>
-    <!-- Mensajes -->
-    <div
-      class="toast-container position-fixed bottom-0 end-0 p-3"
-      style="z-index: 1100"
-    >
-      <div
-        th:if="${mensaje}"
-        class="toast align-items-center text-bg-success border-0"
-        role="alert"
-        aria-live="assertive"
-        aria-atomic="true"
-        id="toastSuccess"
-      >
+
+    <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1100">
+      <div th:if="${mensaje}" class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true" id="toastSuccess">
         <div class="d-flex">
-          <div class="toast-body">
-            <span th:text="${mensaje}"></span>
-          </div>
-          <button
-            type="button"
-            class="btn-close btn-close-white me-2 m-auto"
-            data-bs-dismiss="toast"
-            aria-label="Close"
-          ></button>
+          <div class="toast-body"><span th:text="${mensaje}"></span></div>
+          <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
         </div>
       </div>
-      <div
-        th:if="${error}"
-        class="toast align-items-center text-bg-danger border-0"
-        role="alert"
-        aria-live="assertive"
-        aria-atomic="true"
-        id="toastError"
-      >
+      <div th:if="${error}" class="toast align-items-center text-bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true" id="toastError">
         <div class="d-flex">
-          <div class="toast-body">
-            <span th:text="${error}"></span>
-          </div>
-          <button
-            type="button"
-            class="btn-close btn-close-white me-2 m-auto"
-            data-bs-dismiss="toast"
-            aria-label="Close"
-          ></button>
+          <div class="toast-body"><span th:text="${error}"></span></div>
+          <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
         </div>
       </div>
     </div>
 
     <div class="container py-5">
       <div class="row justify-content-center">
-        <div class="col-md-8 col-lg-6">
-          <!-- Tarjeta principal -->
+        <div class="col-md-8 col-lg-8">
+          
           <div class="card shadow border-0">
             <div class="card-header bg-dark text-white text-center">
               <h4 class="mb-0">
@@ -78,153 +45,98 @@
             </div>
 
             <div class="card-body bg-white">
-              <form
-                th:action="@{/vehiculos/mantenimientos/registro}"
-                th:object="${mantenimiento}"
-                method="post"
-                enctype="multipart/form-data"
-              >
+              <form th:action="@{/vehiculos/mantenimientos/registro}" th:object="${mantenimiento}" method="post" enctype="multipart/form-data">
                 <div class="row g-3">
-                  <!-- Vehículo -->
+                  
                   <div class="col-md-6">
                     <label for="vehiculo" class="form-label fw-semibold">
                       <i class="bi bi-car-front me-1"></i> Vehículo
                     </label>
-                    <select
-                      th:field="*{vehiculo}"
-                      id="vehiculo"
-                      class="form-select"
-                      required
-                    >
+                    <select th:field="*{vehiculo}" id="vehiculo" class="form-select" required>
                       <option value="">-- Seleccione --</option>
-                      <option
-                        th:each="v : ${vehiculos}"
-                        th:value="${v.id}"
-                        th:text="${v.placa + ' - ' + v.marca + ' ' + v.modelo}"
-                      ></option>
+                      <option th:each="v : ${vehiculos}" th:value="${v.id}" th:text="${v.placa + ' - ' + v.marca + ' ' + v.modelo}"></option>
                     </select>
                   </div>
 
-                  <!-- Propietario -->
                   <div class="col-md-6">
                     <label for="propietario" class="form-label fw-semibold">
                       <i class="bi bi-person-fill me-1"></i> Propietario
                     </label>
-                    <input
-                      type="text"
-                      id="propietario"
-                      class="form-control"
-                      readonly
-                      th:value="${usuarioLogueado.nombres + ' ' + usuarioLogueado.apellidos}" 
-                    />
+                    <input type="text" id="propietario" class="form-control" readonly th:value="${usuarioLogueado.nombres + ' ' + usuarioLogueado.apellidos}" />
                   </div>
 
-                  <!-- Fecha -->
                   <div class="col-md-6">
                     <label for="fecha" class="form-label fw-semibold">
                       <i class="bi bi-calendar-event me-1"></i> Fecha
                     </label>
-                    <input
-                      type="date"
-                      th:field="*{fecha}"
-                      id="fecha"
-                      class="form-control"
-                      required
-                    />
+                    <input type="date" th:field="*{fecha}" id="fecha" class="form-control" required />
                   </div>
 
-                  <!-- Tipo -->
                   <div class="col-md-6">
                     <label for="tipo" class="form-label fw-semibold">
                       <i class="bi bi-gear-fill me-1"></i> Tipo
                     </label>
-                    <select
-                      th:field="*{tipo}"
-                      id="tipo"
-                      class="form-select"
-                      required
-                    >
+                    <select th:field="*{tipo}" id="tipo" class="form-select" required>
                       <option value="">-- Seleccione --</option>
                       <option value="Preventivo">Preventivo</option>
                       <option value="Correctivo">Correctivo</option>
                     </select>
                   </div>
 
-                  <!-- Detalle -->
+                  <div class="col-12 d-none" id="bloqueReserva">
+                    <div class="alert alert-warning d-flex align-items-center mb-0">
+                        <i class="bi bi-exclamation-triangle-fill me-3 fs-4"></i>
+                        <div class="w-100">
+                            <label class="form-label fw-bold mb-1">Asociar a última reserva (Causa del daño):</label>
+                            <input type="text" id="textoReserva" class="form-control bg-white" readonly placeholder="Seleccione un vehículo primero..." >
+                            <input type="hidden" th:field="*{reserva}" id="idReserva"> 
+                            <div id="msgSinReserva" class="text-danger small mt-1 d-none">Este vehículo no tiene reservas finalizadas recientes.</div>
+                        </div>
+                    </div>
+                  </div>
+
                   <div class="col-md-6">
                     <label for="detalleMant" class="form-label fw-semibold">
-                      <i class="bi bi-list-check me-1"></i> Detalle del
-                      mantenimiento
+                      <i class="bi bi-list-check me-1"></i> Detalle del mantenimiento
                     </label>
-                    <select
-                      id="detalleMant"
-                      name="detalleMant"
-                      th:field="*{detalleMant}"
-                      class="form-select"
-                      required
-                    >
+                    <select id="detalleMant" name="detalleMant" th:field="*{detalleMant}" class="form-select" required>
                       <option value="">-- Seleccione un tipo primero --</option>
                     </select>
                   </div>
 
-                  <!-- Costo -->
+                  <div class="col-md-6 d-none" id="bloqueOtroDetalle">
+                    <label for="otroDetalle" class="form-label fw-semibold text-primary">
+                        <i class="bi bi-pencil-fill me-1"></i> Especifique el detalle
+                    </label>
+                    <input type="text" th:field="*{otroDetalle}" id="otroDetalle" class="form-control" placeholder="Ej: Cambio de bujías...">
+                  </div>
+
                   <div class="col-md-6">
                     <label for="costo" class="form-label fw-semibold">
                       <i class="bi bi-currency-dollar me-1"></i> Costo
                     </label>
-                    <input
-                      type="number"
-                      step="0.01"
-                      th:field="*{costo}"
-                      id="costo"
-                      class="form-control"
-                      placeholder="0.00"
-                      required
-                    />
+                    <input type="number" step="0.01" th:field="*{costo}" id="costo" class="form-control" placeholder="0.00" required />
                   </div>
 
-                  <!-- Descripción -->
+                  <div class="col-md-6">
+                    <label for="archivoFoto" class="form-label fw-semibold">
+                      <i class="bi bi-camera-fill me-1"></i> Foto
+                    </label>
+                    <input type="file" th:field="*{archivoFoto}" id="archivoFoto" class="form-control" accept="image/*" required />
+                  </div>
+
                   <div class="col-12">
                     <label for="descripcion" class="form-label fw-semibold">
-                      <i class="bi bi-card-text me-1"></i> Descripción
-                      (opcional)
+                      <i class="bi bi-card-text me-1"></i> Descripción (opcional)
                     </label>
-                    <textarea
-                      th:field="*{descripcion}"
-                      id="descripcion"
-                      class="form-control"
-                      rows="3"
-                      placeholder="Agrega una descripción si es necesario..."
-                    ></textarea>
+                    <textarea th:field="*{descripcion}" id="descripcion" class="form-control" rows="3" placeholder="Agrega una descripción si es necesario..."></textarea>
                   </div>
 
-                  <!-- Foto -->
-                  <div class="col-12">
-                    <label for="archivoFoto" class="form-label fw-semibold">
-                      <i class="bi bi-camera-fill me-1"></i> Foto del
-                      mantenimiento
-                    </label>
-                    <input
-                      type="file"
-                      th:field="*{archivoFoto}"
-                      id="archivoFoto"
-                      class="form-control"
-                      accept="image/*"
-                      required
-                    />
-                  </div>
-
-                  <!-- Botones -->
-                  <div
-                    class="text-center mt-4 d-flex justify-content-center gap-2"
-                  >
+                  <div class="text-center mt-4 d-flex justify-content-center gap-2">
                     <button type="submit" class="btn btn-dark px-4">
                       <i class="bi bi-save me-1"></i> Guardar
                     </button>
-                    <a
-                      th:href="@{/vehiculos/mantenimientos/listarmantenimiento}"
-                      class="btn btn-outline-secondary px-4"
-                    >
+                    <a th:href="@{/vehiculos/mantenimientos/listarmantenimiento}" class="btn btn-outline-secondary px-4">
                       <i class="bi bi-card-list me-1"></i> Ver Mantenimientos
                     </a>
                   </div>
@@ -236,56 +148,144 @@
       </div>
     </div>
 
-    <!-- Script -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
       document.addEventListener("DOMContentLoaded", () => {
         const tipoSelect = document.getElementById("tipo");
         const detalleSelect = document.getElementById("detalleMant");
+        const vehiculoSelect = document.getElementById("vehiculo");
+        
+        const campoFecha = document.getElementById("fecha");
+        // --- NUEVO: BLOQUEAR FECHAS FUTURAS ---
+        // Obtenemos la fecha de hoy en formato YYYY-MM-DD
+        const hoy = new Date().toISOString().split("T")[0];
+        // Establecemos el atributo 'max' al input
+        campoFecha.setAttribute("max", hoy);
 
+        // Elementos "Correctivo"
+        const bloqueReserva = document.getElementById("bloqueReserva");
+        const textoReserva = document.getElementById("textoReserva");
+        const idReserva = document.getElementById("idReserva");
+        const msgSinReserva = document.getElementById("msgSinReserva");
+
+        // Elementos "Otros"
+        const bloqueOtroDetalle = document.getElementById("bloqueOtroDetalle");
+        const inputOtroDetalle = document.getElementById("otroDetalle");
+
+        // ---------------------------------------------------------
+        // 1. CAMBIO EN TIPO (Preventivo vs Correctivo)
+        // ---------------------------------------------------------
         tipoSelect.addEventListener("change", async () => {
-          const tipo = tipoSelect.value.trim();
-          detalleSelect.innerHTML = '<option value="">Cargando...</option>';
+            const tipo = tipoSelect.value;
 
-          if (!tipo) {
-            detalleSelect.innerHTML =
-              '<option value="">-- Seleccione un tipo primero --</option>';
-            return;
-          }
+            // Lógica Visual Correctivo
+            if (tipo === "Correctivo") {
+                bloqueReserva.classList.remove("d-none");
+                buscarUltimaReserva(); // Buscar si ya hay auto seleccionado
+            } else {
+                bloqueReserva.classList.add("d-none");
+                idReserva.value = ""; // Limpiar ID
+                textoReserva.value = "";
+            }
 
-          try {
-            const response = await fetch(
-              `/vehiculos/mantenimientos/detalles/${tipo}`
-            );
-            const detalles = await response.json();
+            // Cargar Combobox Detalles (Tu lógica original)
+            detalleSelect.innerHTML = '<option value="">Cargando...</option>';
+            if (!tipo) {
+                detalleSelect.innerHTML = '<option value="">-- Seleccione un tipo primero --</option>';
+                return;
+            }
 
-            detalleSelect.innerHTML =
-              '<option value="">-- Seleccione --</option>';
-            detalles.forEach((det) => {
-              const opt = document.createElement("option");
-              opt.value = det.nombreDetalle;
-              opt.textContent = det.nombreDetalle;
-              detalleSelect.appendChild(opt);
-            });
-          } catch (error) {
-            console.error("Error cargando detalles:", error);
-            detalleSelect.innerHTML =
-              '<option value="">Error al cargar opciones</option>';
-          }
+            try {
+                const response = await fetch(`/vehiculos/mantenimientos/detalles/${tipo}`);
+                const detalles = await response.json();
+                
+                detalleSelect.innerHTML = '<option value="">-- Seleccione --</option>';
+                detalles.forEach((det) => {
+                    const opt = document.createElement("option");
+                    opt.value = det.nombreDetalle;
+                    opt.textContent = det.nombreDetalle;
+                    detalleSelect.appendChild(opt);
+                });
+                
+                // Disparar evento change manual para resetear el input de "Otros"
+                detalleSelect.dispatchEvent(new Event('change'));
+
+            } catch (error) {
+                console.error("Error cargando detalles:", error);
+                detalleSelect.innerHTML = '<option value="">Error al cargar opciones</option>';
+            }
         });
-      });
-      document.addEventListener("DOMContentLoaded", function () {
+
+        // ---------------------------------------------------------
+        // 2. CAMBIO EN VEHÍCULO (Buscar Reserva)
+        // ---------------------------------------------------------
+        vehiculoSelect.addEventListener("change", buscarUltimaReserva);
+
+        async function buscarUltimaReserva() {
+            const vehiculoId = vehiculoSelect.value;
+            const tipo = tipoSelect.value;
+
+            // Solo buscamos si hay auto Y es correctivo
+            if (vehiculoId && tipo === "Correctivo") {
+                textoReserva.value = "Buscando...";
+                try {
+                    // Llamada al endpoint que creamos en el controller
+                    const response = await fetch(`/vehiculos/mantenimientos/ultima-reserva/${vehiculoId}`);
+                    const data = await response.json();
+
+                    if (data.encontrada) {
+                        textoReserva.value = data.descripcion; // "Reserva #5 - Finalizada el..."
+                        idReserva.value = data.id;
+                        msgSinReserva.classList.add("d-none");
+                    } else {
+                        textoReserva.value = "";
+                        idReserva.value = "";
+                        msgSinReserva.classList.remove("d-none"); // Mostrar mensaje de error
+                    }
+                } catch (e) {
+                    console.error(e);
+                    textoReserva.value = "Error de conexión";
+                }
+            } else {
+                // Si cambia a preventivo o quita el auto, limpiamos
+                if(tipo !== "Correctivo") {
+                    textoReserva.value = "";
+                    idReserva.value = "";
+                }
+            }
+        }
+
+        // ---------------------------------------------------------
+        // 3. CAMBIO EN DETALLE (Detectar "Otros")
+        // ---------------------------------------------------------
+        detalleSelect.addEventListener("change", () => {
+            // Obtenemos el texto de la opción seleccionada
+            const textoSeleccionado = detalleSelect.options[detalleSelect.selectedIndex].text;
+            
+            // Verificamos si contiene la palabra "Otros" o "Otro"
+            if (textoSeleccionado.includes("Otros") || textoSeleccionado.includes("Otro")) {
+                bloqueOtroDetalle.classList.remove("d-none");
+                inputOtroDetalle.setAttribute("required", "true"); // Hacer obligatorio
+            } else {
+                bloqueOtroDetalle.classList.add("d-none");
+                inputOtroDetalle.removeAttribute("required");
+                inputOtroDetalle.value = ""; // Limpiar campo
+            }
+        });
+
+        // ---------------------------------------------------------
+        // 4. TOASTS (Mensajes)
+        // ---------------------------------------------------------
         const toastSuccess = document.getElementById("toastSuccess");
         const toastError = document.getElementById("toastError");
 
         if (toastSuccess) {
-          const bsToast = new bootstrap.Toast(toastSuccess, { delay: 4000 });
-          bsToast.show();
+            const bsToast = new bootstrap.Toast(toastSuccess, { delay: 4000 });
+            bsToast.show();
         }
-
         if (toastError) {
-          const bsToast = new bootstrap.Toast(toastError, { delay: 6000 });
-          bsToast.show();
+            const bsToast = new bootstrap.Toast(toastError, { delay: 6000 });
+            bsToast.show();
         }
       });
     </script>

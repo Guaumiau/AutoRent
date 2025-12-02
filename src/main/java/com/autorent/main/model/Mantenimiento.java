@@ -33,6 +33,9 @@ public class Mantenimiento {
     @Column(name = "detalle_mant")
     private String detalleMant;
 
+    @Column(name = "otro_detalle")
+    private String otroDetalle;
+
     @Transient
     private MultipartFile archivoFoto;
 
@@ -47,5 +50,9 @@ public class Mantenimiento {
     @ManyToOne
     @JoinColumn(name = "detalle_id")
     private DetalleMantenimiento detalle;
+    
+    @ManyToOne
+    @JoinColumn(name = "idres")
+    private Reserva reserva;
 
 }

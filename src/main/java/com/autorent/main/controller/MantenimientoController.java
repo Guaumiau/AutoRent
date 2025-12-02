@@ -2,10 +2,12 @@ package com.autorent.main.controller;
 
 import com.autorent.main.model.DetalleMantenimiento;
 import com.autorent.main.model.Mantenimiento;
+import com.autorent.main.model.Reserva;
 import com.autorent.main.model.Usuario; // Importar Usuario
 import com.autorent.main.model.Vehiculo;
 import com.autorent.main.repository.DetalleMantenimientoRepository;
 import com.autorent.main.repository.MantenimientoRepository;
+import com.autorent.main.repository.ReservaRepository;
 import com.autorent.main.repository.UsuarioRepository;
 import com.autorent.main.repository.VehiculoRepository;
 import com.cloudinary.Cloudinary;
@@ -23,6 +25,7 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/vehiculos/mantenimientos")
@@ -42,6 +45,9 @@ public class MantenimientoController {
 
     @Autowired
     private DetalleMantenimientoRepository detalleRepository;
+
+    @Autowired
+    private ReservaRepository reservaRepository;
 
     // Mostrar formulario (FILTRADO POR DUEÑO)
     @GetMapping("/registro")
@@ -67,9 +73,15 @@ public class MantenimientoController {
 
     // Registrar mantenimiento
     @PostMapping("/registro")
-    public String registrarMantenimiento(Mantenimiento mantenimiento, RedirectAttributes ra, Principal principal) {
+    public String registrarMantenimiento(Mantenimiento mantenimiento, 
+        @RequestParam(value = "reserva", required = false) Integer idReserva, RedirectAttributes ra, Principal principal) {
         
-        mantenimiento.setFecha(LocalDate.now());
+        if (mantenimiento.getFecha().isAfter(LocalDate.now())) {
+            ra.addFlashAttribute("error", "❌ La fecha de mantenimiento no puede ser futura.");
+            // Devolvemos el objeto para que no tenga que escribir todo de nuevo
+            ra.addFlashAttribute("mantenimiento", mantenimiento); 
+            return "redirect:/vehiculos/mantenimientos/registro";
+        }
 
         // 1. Obtener Usuario Logueado
         String email = principal.getName();
@@ -86,6 +98,13 @@ public class MantenimientoController {
             } else {
                 ra.addFlashAttribute("error", "❌ No puedes registrar mantenimiento a un vehículo ajeno.");
                 return "redirect:/vehiculos/mantenimientos/listarmantenimiento";
+            }
+        }
+
+        if (idReserva != null) {
+            Optional<Reserva> reservaOpt = reservaRepository.findById(idReserva);
+            if (reservaOpt.isPresent()) {
+                mantenimiento.setReserva(reservaOpt.get());
             }
         }
 
@@ -141,6 +160,21 @@ public class MantenimientoController {
         return ResponseEntity.ok(detalles);
     }
     
-    // El endpoint de 'obtenerPropietario' ya no es necesario porque el propietario siempre es el logueado.
-    // Puedes borrarlo o dejarlo si lo usas para algo más.
+    @GetMapping("/ultima-reserva/{idVehiculo}")
+    @ResponseBody
+    public Map<String, Object> obtenerUltimaReserva(@PathVariable Integer idVehiculo) {
+        Map<String, Object> respuesta = new HashMap<>();
+        
+        Optional<Reserva> reservaOpt = reservaRepository.findUltimaReservaFinalizada(idVehiculo);
+        
+        if (reservaOpt.isPresent()) {
+            Reserva r = reservaOpt.get();
+            respuesta.put("encontrada", true);
+            respuesta.put("id", r.getId());
+            respuesta.put("descripcion", "Reserva #" + r.getId() + " - Finalizada el: " + r.getFechafinalizacion().toLocalDate());
+        } else {
+            respuesta.put("encontrada", false);
+        }
+        return respuesta;
+    }
 }

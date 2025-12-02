@@ -190,7 +190,7 @@ public class VehiculoController {
 
                 vehiculosEliminadosRepository.save(registro);
 
-                vehiculo.setEstveh(EstadoVehiculo.NO_DISPONIBLE);
+                vehiculo.setEstveh(EstadoVehiculo.ELIMINADO);
                 vehiculoRepository.save(vehiculo);
 
                 ra.addFlashAttribute("mensaje", "✅ Vehículo eliminado correctamente.");
@@ -199,6 +199,24 @@ public class VehiculoController {
             }
         } catch (Exception e) {
             ra.addFlashAttribute("error", "❌ No se pudo eliminar el vehículo.");
+        }
+        return "redirect:/vehiculos/lista";
+    }
+    
+    // REACTIVAR VEHÍCULO (De Mantenimiento -> Disponible)
+    @GetMapping("/habilitar/{id}")
+    public String habilitarVehiculo(@PathVariable Integer id, RedirectAttributes ra) {
+        Optional<Vehiculo> vehiculoOpt = vehiculoRepository.findById(id);
+        
+        if (vehiculoOpt.isPresent()) {
+            Vehiculo vehiculo = vehiculoOpt.get();
+            
+            // Solo si está en mantenimiento lo activamos
+            if (vehiculo.getEstveh() == EstadoVehiculo.EN_MANTENIMIENTO) {
+                vehiculo.setEstveh(EstadoVehiculo.DISPONIBLE);
+                vehiculoRepository.save(vehiculo);
+                ra.addFlashAttribute("mensaje", "✅ Vehículo habilitado y visible en el catálogo nuevamente.");
+            }
         }
         return "redirect:/vehiculos/lista";
     }
