@@ -91,17 +91,52 @@
               </thead>
               <tbody>
                 <tr th:each="m : ${listaMantenimientos}">
-                  <td th:text="${m.id}"></td>
-                  <td
-                    th:text="${m.vehiculo != null ? m.vehiculo.placa : ''}"
-                  ></td>
-                  <td
-                    th:text="${m.usuario != null ? m.usuario.nombres + ' ' + m.usuario.apellidos : ''}"
-                  ></td>
-                  <td th:text="${m.tipo}"></td>
-                  <td th:text="${m.detalleMant}"></td>
-                  <td th:text="${m.fecha}"></td>
-                  <td th:text="${m.costo}"></td>
+                  
+                  <td th:text="${m.id}" class="fw-bold text-muted"></td>
+
+                  <td style="min-width: 250px;">
+                    <div class="d-flex align-items-center" th:if="${m.vehiculo != null}">
+                        <img th:src="${m.vehiculo.foto}" 
+                            alt="Auto" 
+                            class="rounded-circle me-2"
+                            style="width: 40px; height: 40px; object-fit: cover;">
+                        <div>
+                            <div class="fw-bold" th:text="${m.vehiculo.placa}"></div>
+                            <div class="small text-muted" th:text="${m.vehiculo.marca + ' ' + m.vehiculo.modelo}"></div>
+                        </div>
+                    </div>
+                    <span th:unless="${m.vehiculo != null}" class="text-muted fst-italic">Vehículo eliminado</span>
+                  </td>
+
+                  <td th:text="${m.usuario != null ? m.usuario.nombres + ' ' + m.usuario.apellidos : '---'}"></td>
+
+                  <td>
+                    <span th:text="${m.tipo}" 
+                          class="badge rounded-pill mb-1"
+                          th:classappend="${m.tipo == 'Preventivo' ? 'text-bg-info' : 'text-bg-warning'}">
+                    </span>
+                    
+                    <div th:if="${m.reserva != null}" class="small text-muted" style="font-size: 0.75rem;">
+                        <i class="bi bi-link-45deg"></i> Reserva #<span th:text="${m.reserva.id}"></span>
+                    </div>
+                  </td>
+
+                  <td>
+                      <span th:if="${m.detalleMant == 'Otros' or m.detalleMant == 'Otro'}" 
+                            th:text="${m.otroDetalle}" class="fst-italic text-dark"></span>
+                      
+                      <span th:unless="${m.detalleMant == 'Otros' or m.detalleMant == 'Otro'}" 
+                            th:text="${m.detalleMant}"></span>
+                  </td>
+
+                  <td>
+                    <i class="bi bi-calendar3 me-1 text-secondary"></i>
+                    <span th:text="${#temporals.format(m.fecha, 'dd/MM/yyyy')}"></span>
+                  </td>
+
+                  <td class="fw-bold text-success" 
+                      th:text="'S/. ' + ${#numbers.formatDecimal(m.costo, 1, 'COMMA', 2, 'POINT')}">
+                  </td>
                 </tr>
               </tbody>
             </table>

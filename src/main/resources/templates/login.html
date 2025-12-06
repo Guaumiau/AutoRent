@@ -2,28 +2,106 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Iniciar Sesión</title>
+    <title>Iniciar Sesión - AutoRent</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+    
+    <style>
+        body {
+            background: #121212; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .card-login {
+            background-color: #1e1e1e;
+            border: 1px solid #333;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+        }
+        
+        /* Inputs normales */
+        .form-control {
+            background-color: #2c2c2c;
+            border: 1px solid #444;
+            color: white;
+        }
+        .form-control:focus {
+            background-color: #2c2c2c;
+            color: white;
+            border-color: #fd7e14;
+            box-shadow: 0 0 0 0.25rem rgba(253, 126, 20, 0.25);
+        }
+        .input-group-text {
+            background-color: #2c2c2c;
+            border: 1px solid #444;
+            color: #aaa;
+        }
+
+        /* --- CORRECCIONES NUEVAS --- */
+        
+        /* 1. Placeholder más visible */
+        .form-control::placeholder {
+            color: #888;
+        }
+
+        /* 2. Fix para el Autocompletado (Fondo azul/blanco molesto) */
+        input:-webkit-autofill,
+        input:-webkit-autofill:hover, 
+        input:-webkit-autofill:focus, 
+        input:-webkit-autofill:active {
+            -webkit-box-shadow: 0 0 0 30px #2c2c2c inset !important;
+            -webkit-text-fill-color: white !important;
+            caret-color: white;
+        }
+    </style>
 </head>
-<body class="bg-dark text-white">
+<body>
 
-<div class="container d-flex justify-content-center align-items-center" style="height: 100vh;">
-    <form method="post" th:action="@{/login}" class="bg-secondary p-4 rounded w-25">
-        <h3 class="text-center mb-3">Iniciar Sesión</h3>
+    <div class="card card-login p-4 rounded col-11 col-sm-8 col-md-5 col-lg-4 position-relative">
+        
+        <a th:href="@{/index}" class="position-absolute top-0 end-0 m-3 text-secondary text-decoration-none fs-4" title="Cerrar">
+            <i class="bi bi-x-lg"></i>
+        </a>
 
-        <div class="mb-3">
-            <label>Email:</label>
-            <input type="text" title="username" name="username" class="form-control">
+        <div class="text-center mb-4 mt-2">
+            <img th:src="@{/images/1.png}" alt="AutoRent Logo" width="100" class="img-fluid mb-2">
+            <h4 class="fw-normal text-white mt-2">¡Bienvenido de nuevo!</h4>
+            <p class="text-secondary small">Ingresa tus credenciales para continuar</p>
         </div>
 
-        <div class="mb-3">
-            <label>Contraseña:</label>
-            <input type="password" title="password" name="password" class="form-control">
+        <div th:if="${param.error}" class="alert alert-danger text-center py-2 small border-0 mb-3">
+            <i class="bi bi-exclamation-triangle-fill me-1"></i> Usuario o contraseña incorrectos
+        </div>
+        <div th:if="${param.logout}" class="alert alert-success text-center py-2 small border-0 mb-3">
+            <i class="bi bi-check-circle-fill me-1"></i> Sesión cerrada correctamente
         </div>
 
-        <button class="btn btn-warning w-100">Ingresar</button>
-    </form>
-</div>
+        <form method="post" th:action="@{/login}">
+            
+            <div class="mb-3">
+                <label class="form-label text-secondary small">Correo Electrónico</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                    <input type="text" name="username" class="form-control" placeholder="nombre@correo.com" required autofocus>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label text-secondary small">Contraseña</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                    <input type="password" name="password" class="form-control" placeholder="••••••••" required>
+                </div>
+            </div>
+
+            <button class="btn btn-warning w-100 py-2 fw-bold mb-2">
+                Ingresar
+            </button>
+            
+        </form>
+    </div>
 
 </body>
 </html>

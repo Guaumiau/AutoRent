@@ -80,47 +80,62 @@
               </thead>
               <tbody>
                 <tr th:each="v : ${listaVehiculos}" 
-                    th:classappend="${v.estveh.name() == 'NO_DISPONIBLE'} ? 'table-secondary text-muted'">
+                    th:classappend="${v.estveh?.name() == 'ELIMINADO'} ? 'table-secondary text-muted'">
+                  
                   <td style="width: 300px">
                     <img
                       th:src="${v.foto}"
                       alt="vehiculo"
-                      class="img-fluid"
-                      style="max-height: 400px; width: auto"
+                      class="img-fluid rounded"
+                      style="max-height: 150px; width: auto; object-fit: cover;" 
+                      th:styleappend="${v.estveh?.name() == 'ELIMINADO'} ? 'filter: grayscale(100%); opacity: 0.6;'"
                     />
                   </td>
-                  <td th:text="${v.placa}"></td>
+
+                  <td th:text="${v.placa}" class="fw-bold"></td>
                   <td th:text="${v.marca}"></td>
                   <td th:text="${v.modelo}"></td>
                   <td>
-                      <span th:if="${v.estveh.name() == 'DISPONIBLE'}" 
-                            class="badge bg-success">
-                            Activo
-                      </span>
+                    <span th:if="${v.estveh?.name() == 'DISPONIBLE'}" class="badge bg-success">
+                        <i class="bi bi-check-circle"></i> Disponible
+                    </span>
+                    
+                    <span th:if="${v.estveh?.name() == 'OCUPADO'}" class="badge bg-primary">
+                        <i class="bi bi-calendar-check"></i> Ocupado
+                    </span>
 
-                      <span th:if="${v.estveh.name() == 'NO_DISPONIBLE'}" 
-                            class="badge bg-danger">
-                            Eliminado
-                      </span>
-                      
-                      <span th:if="${v.estveh.name() == 'PENDIENTE'}" 
-                            class="badge bg-warning text-dark">
-                            Pendiente
-                      </span>
+                    <span th:if="${v.estveh?.name() == 'EN_MANTENIMIENTO'}" class="badge bg-warning text-dark">
+                        <i class="bi bi-tools"></i> En Mantenimiento
+                    </span>
+
+                    <span th:if="${v.estveh?.name() == 'ELIMINADO'}" class="badge bg-danger">
+                        <i class="bi bi-trash"></i> Eliminado
+                    </span>
                   </td>
                   <td>
-                    <form
-                      th:action="@{/vehiculos/detalles/{id}(id=${v.id})}"
-                      method="post"
-                    >
-                      <button class="btn btn-info btn-sm">🔍 Detalles</button>
-                    </form>
-                    <br />
-                    <a th:href="@{/vehiculos/confirmar/{id}(id=${v.id})}"
-                      class="btn btn-danger btn-sm"
-                      th:classappend="${v.estveh.name() == 'NO_DISPONIBLE'} ? 'disabled'">
-                      <i class="bi bi-trash"></i> Eliminar
-                    </a>
+                    <div class="d-flex flex-column align-items-center gap-2">
+                        
+                        <form th:action="@{/vehiculos/detalles/{id}(id=${v.id})}" method="post">
+                          <button class="btn btn-info btn-sm text-white" title="Ver detalles">
+                            <i class="bi bi-eye"></i> Ver detalles
+                          </button>
+                        </form>
+                        
+                        <a th:if="${v.estveh?.name() == 'EN_MANTENIMIENTO'}"
+                           th:href="@{/vehiculos/habilitar/{id}(id=${v.id})}"
+                           class="btn btn-success btn-sm"
+                           title="Habilitar Vehículo">
+                           <i class="bi bi-check-lg"></i> Habilitar
+                        </a>
+
+                        <a th:if="${v.estveh?.name() != 'ELIMINADO' and v.estveh?.name() != 'OCUPADO'}"
+                           th:href="@{/vehiculos/confirmar/{id}(id=${v.id})}"
+                           class="btn btn-danger btn-sm"
+                           title="Eliminar Vehículo">
+                           <i class="bi bi-trash"></i> Eliminar
+                        </a>
+
+                    </div>
                   </td>
                 </tr>
               </tbody>

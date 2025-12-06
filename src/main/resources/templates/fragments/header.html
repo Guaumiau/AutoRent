@@ -17,9 +17,9 @@
 <header th:fragment="header"
         class="border-bottom border-secondary"
         th:style="
-            ${#authorization.expression('hasAuthority(''cliente'')')} ? 'background-color: #0a58ca;' :
+            ${#authorization.expression('hasAuthority(''cliente'')')} ? 'background-color: #4eafff;' :
             (${#authorization.expression('hasAuthority(''propietario'')')} ? 'background-color: #212529;' :
-            'background-color: #fd7e14;')
+            'background-color: #9b9b9b;')
         ">
         <style>
         /* Ocultar scrollbar para Chrome, Safari y Opera */
@@ -113,9 +113,9 @@
      tabindex="-1"
      id="sidebarMenuKayak"
      th:style="
-        ${#authorization.expression('hasAuthority(''cliente'')')} ? 'background-color: #0a58ca;' :
+        ${#authorization.expression('hasAuthority(''cliente'')')} ? 'background-color: #4eafff;' :
         (${#authorization.expression('hasAuthority(''propietario'')')} ? 'background-color: #212529;' :
-        'background-color: #fd7e14;')
+        'background-color: #9b9b9b;')
      ">
 
 

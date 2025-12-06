@@ -132,7 +132,7 @@ public class ReservaController {
             reservaRepository.save(reserva);
 
             // 6. Actualizamos el estado del Vehículo
-            vehiculo.setEstveh(EstadoVehiculo.PENDIENTE);
+            vehiculo.setEstveh(EstadoVehiculo.OCUPADO);
             vehiculoRepository.save(vehiculo);
 
             // 7. Mensaje de Éxito

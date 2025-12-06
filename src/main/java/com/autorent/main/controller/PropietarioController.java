@@ -73,9 +73,9 @@ public class PropietarioController {
             reserva.setEstado(EstadoReserva.CONFIRMADA);
             reservaRepository.save(reserva);
             
-            // El vehículo ya estaba PENDIENTE, ahora lo pasamos a NO_DISPONIBLE (Ocupado)
+            // El vehículo ya estaba PENDIENTE, ahora lo pasamos a OCUPADO (Ocupado)
             Vehiculo vehiculo = reserva.getVehiculo();
-            vehiculo.setEstveh(EstadoVehiculo.NO_DISPONIBLE);
+            vehiculo.setEstveh(EstadoVehiculo.OCUPADO);
             vehiculoRepository.save(vehiculo);
 
             ra.addFlashAttribute("mensaje", "✅ Reserva CONFIRMADA. El vehículo se ha marcado como ocupado.");
@@ -137,7 +137,7 @@ public class PropietarioController {
                 reservaRepository.save(reserva);
 
                 Vehiculo vehiculo = reserva.getVehiculo();
-                vehiculo.setEstveh(EstadoVehiculo.DISPONIBLE);
+                vehiculo.setEstveh(EstadoVehiculo.EN_MANTENIMIENTO);
                 vehiculoRepository.save(vehiculo);
 
                 ra.addFlashAttribute("mensaje", "🏁 ¡Alquiler finalizado correctamente!");
