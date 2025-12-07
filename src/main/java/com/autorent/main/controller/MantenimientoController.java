@@ -68,7 +68,7 @@ public class MantenimientoController {
         
         model.addAttribute("usuarioLogueado", usuario);
 
-        return "vehiculos/mantenimientos/registrarmantenimiento";
+        return "vehiculos/mantenimientos/registrarMantenimiento";
     }
 
     // Registrar mantenimiento
@@ -149,7 +149,7 @@ public class MantenimientoController {
 
         model.addAttribute("listaMantenimientos", lista);
 
-        return "vehiculos/mantenimientos/listarmantenimiento";
+        return "vehiculos/mantenimientos/listarMantenimiento";
     }
 
     // Endpoint AJAX para traer detalles según tipo
