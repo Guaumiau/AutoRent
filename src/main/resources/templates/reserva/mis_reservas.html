@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Mis Reservas</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="bg-light">
+    
+    <header th:replace="~{fragments/header :: header}"></header>
+
+    <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1100;">
+        
+        <div th:if="${mensaje}" id="toastSuccess" class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body">
+                    <i class="bi bi-check-circle-fill me-2"></i>
+                    <span th:text="${mensaje}"></span>
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+
+        <div th:if="${error}" id="toastError" class="toast align-items-center text-bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    <span th:text="${error}"></span>
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container py-5">
+      
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold text-dark">Mis Reservas</h2>
+      </div>
+
+      <div th:if="${reservas.isEmpty()}" class="text-center py-5">
+        <i class="bi bi-calendar-x text-muted" style="font-size: 4rem;"></i>
+        <h4 class="mt-3 text-muted">Aún no tienes reservas</h4>
+        <p class="text-secondary">¿Buscas un auto para tu próximo viaje?</p>
+        <a th:href="@{/reserva/catalogo}" class="btn btn-primary mt-2">
+            Ir al Catálogo
+        </a>
+      </div>
+
+      <div th:unless="${reservas.isEmpty()}" class="row g-4">
+        
+        <div class="col-12 col-lg-10 mx-auto" th:each="reserva : ${reservas}">
+          <div class="card shadow-sm border-0 overflow-hidden">
+            <div class="row g-0">
+              
+              <div class="col-md-4">
+                <img th:src="${reserva.vehiculo.foto}" 
+                     class="img-fluid h-100 w-100" 
+                     alt="Auto"
+                     style="object-fit: cover; min-height: 200px;">
+              </div>
+              
+              <div class="col-md-8">
+                <div class="card-body h-100 d-flex flex-column justify-content-center">
+                  
+                  <div class="d-flex justify-content-between align-items-start mb-2">
+                    <h4 class="card-title fw-bold mb-0">
+                        <span th:text="${reserva.vehiculo.marca}">Marca</span>
+                        <span th:text="${reserva.vehiculo.modelo}">Modelo</span>
+                    </h4>
+
+                    <span th:if="${reserva.estado.name() == 'PENDIENTE'}" 
+                          class="badge bg-warning text-dark rounded-pill">
+                          <i class="bi bi-hourglass-split"></i> Pendiente
+                    </span>
+                    <span th:if="${reserva.estado.name() == 'CONFIRMADA'}" 
+                          class="badge bg-primary rounded-pill">
+                          <i class="bi bi-hand-thumbs-up-fill"></i> Confirmada
+                    </span>
+                    <span th:if="${reserva.estado.name() == 'ESPERANDO_CLIENTE'}" 
+                          class="badge bg-info text-dark rounded-pill">
+                          <i class="bi bi-key"></i> Llaves en camino
+                    </span>
+                    <span th:if="${reserva.estado.name() == 'EN_USO'}" 
+                          class="badge bg-success rounded-pill">
+                          <i class="bi bi-car-front-fill"></i> En Curso
+                    </span>
+                    <span th:if="${reserva.estado.name() == 'ESPERANDO_PROPIETARIO'}" 
+                          class="badge bg-secondary rounded-pill">
+                          <i class="bi bi-box-arrow-in-down"></i> Devolución
+                    </span>
+                    <span th:if="${reserva.estado.name() == 'FINALIZADA'}" 
+                          class="badge bg-secondary rounded-pill">
+                          Finalizada
+                    </span>
+                    <span th:if="${reserva.estado.name() == 'RECHAZADA' or reserva.estado.name() == 'CANCELADA'}" 
+                          class="badge bg-danger rounded-pill">
+                          Cancelada
+                    </span>
+                  </div>
+
+                  <p class="text-muted mb-3">
+                    <i class="bi bi-car-front-fill me-1"></i>
+                    Placa: <span th:text="${reserva.vehiculo.placa}">ABC-123</span>
+                  </p>
+
+                  <div class="row mb-3">
+                    <div class="col-6">
+                        <small class="text-uppercase text-secondary fw-bold" style="font-size: 0.7rem;">Inicio</small>
+                        <div class="fs-6 text-dark">
+                            <i class="bi bi-calendar-event me-1 text-primary"></i>
+                            <span th:text="${#temporals.format(reserva.fechainicio, 'dd/MM/yyyy HH:mm')}"></span>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <small class="text-uppercase text-secondary fw-bold" style="font-size: 0.7rem;">Fin</small>
+                        <div class="fs-6 text-dark">
+                            <i class="bi bi-flag-fill me-1 text-danger"></i>
+                            <span th:text="${#temporals.format(reserva.fechafin, 'dd/MM/yyyy HH:mm')}"></span>
+                        </div>
+                    </div>
+                  </div>
+
+                  <div class="border-top pt-3 d-flex justify-content-between align-items-center mt-auto">
+                    
+                    <div>
+                        <div class="text-muted small">
+                            Reservado el: <span th:text="${#temporals.format(reserva.fechares, 'dd/MM/yyyy HH:mm')}"></span>
+                        </div>
+                        <div>
+                            <span class="text-muted me-2">Total:</span>
+                            <span class="fs-4 fw-bold text-dark" 
+                                  th:text="'S/. ' + ${#numbers.formatDecimal(reserva.costo, 1, 'COMMA', 2, 'POINT')}">
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="text-end">
+
+                        <div th:if="${reserva.estado.name() == 'PENDIENTE' or reserva.estado.name() == 'CONFIRMADA'}">
+                            <a th:href="@{/reserva/cancelar/{id}(id=${reserva.id})}" 
+                               class="btn btn-outline-danger btn-sm"
+                               onclick="return confirm('¿Estás seguro de que deseas cancelar tu reserva?');">
+                               Cancelar
+                            </a>
+                        </div>
+
+                        <div th:if="${reserva.estado.name() == 'ESPERANDO_CLIENTE'}">
+                            <a th:href="@{/reserva/confirmar-entrega/{id}(id=${reserva.id})}" 
+                               class="btn btn-success btn-sm"
+                               onclick="return confirm('¿Confirmas que has recibido el vehículo?')">
+                               <i class="bi bi-check-circle me-1"></i> Confirmar Recepción
+                            </a>
+                        </div>
+
+                        <div th:if="${reserva.estado.name() == 'EN_USO'}">
+                            <a th:href="@{/reserva/devolver/{id}(id=${reserva.id})}" 
+                               class="btn btn-primary btn-sm"
+                               onclick="return confirm('¿Ya devolviste las llaves al dueño?')">
+                               <i class="bi bi-arrow-return-left me-1"></i> Devolver Auto
+                            </a>
+                        </div>
+
+                        <div th:if="${reserva.estado.name() == 'ESPERANDO_PROPIETARIO'}">
+                            <span class="text-muted small fst-italic">
+                                <i class="bi bi-hourglass-split"></i> Esperando confirmación del dueño...
+                            </span>
+                        </div>
+
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+      document.addEventListener("DOMContentLoaded", function() {
+        
+        const toastSuccessEl = document.getElementById('toastSuccess');
+        if (toastSuccessEl) {
+          const toastSuccess = new bootstrap.Toast(toastSuccessEl, { delay: 4000 });
+          toastSuccess.show();
+        }
+
+        const toastErrorEl = document.getElementById('toastError');
+        if (toastErrorEl) {
+          const toastError = new bootstrap.Toast(toastErrorEl, { delay: 6000 });
+          toastError.show();
+        }
+        
+      });
+    </script>
+  </body>
+</html>
